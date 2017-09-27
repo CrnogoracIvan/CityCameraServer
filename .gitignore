@@ -1,0 +1,7 @@
+.idea
+/node_modules
+/log/*
+/doc/*
+npm-debug.log
+build/**
+public/resources/vendor/**

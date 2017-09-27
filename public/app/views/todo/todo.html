@@ -1,0 +1,21 @@
+<div class="container">
+  <h1>ToDo list</h1>
+  <input type="text" name="newtodo" ng-model="newTodo" required="" />
+  <table class="table table-bordered">
+    <button type="submit" value="Submit" ng-disabled="newTodo==undefined || newTodo==''" ng-click="addTodo()">Add</button>
+    <thead>
+      <tr> New task</tr>
+    </thead>
+    <tbody>
+      <tr>
+        <tr ng-repeat="todo in todos">
+         <td><span ng-class="{'done': todo.done}">{{$index}}</span></td>
+          <td><span ng-class="{'done': todo.done}">{{todo.title}}</span></td>
+          <td>
+            <button type="submit" value="Submit" ng-click="delete($index)">Delete</button>
+          </td>
+        </tr>
+      </tr>
+    </tbody>
+  </table>
+</div>

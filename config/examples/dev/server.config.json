@@ -1,0 +1,169 @@
+{
+  "env" : "dev",
+  "servers": [
+    {
+      "name" : "main",
+      "modules" : ["module1", "module2", "module3"],
+      "security" : true,
+      "port": 3000,
+      "SSL" : {
+        "enable" : false,
+        "keyPath" : "",
+        "certPath" : "",
+        "bundlePath" : "",
+        "ciphers" : ""
+      }
+    },
+    {
+      "name" : "secondary",
+      "modules" : ["moduleB1", "moduleB2"],
+      "security" : false,
+      "port": 1000,
+      "SSL" : {
+        "enable" : false,
+        "keyPath" : "",
+        "certPath" : "",
+        "bundlePath" : "",
+        "ciphers" : ""
+      }
+    }
+  ],
+  "push": {
+    "NO_PUSH": "NO_PUSH",
+    "global": {
+      "sender": "SOME API KEY"
+    },
+    "ios": {
+      "cert": "./config/certs/some.pem",
+      "key": "./config/certs/key.pem",
+      "production": true,
+      "passphrase": "SOME PASS PHRASE",
+      "gateway": "gateway.push.apple.com",
+      "batchFeedback": true,
+      "interval": 60,
+      "note": {
+        "expiry": 3600,
+        "badge": 1,
+        "sound": "ping.aiff",
+        "messageFrom": "SERVER MESSAGE"
+      },
+      "categories" : {
+        "IM": "IM_ACTION",
+        "CALL": "CALL_ACTION",
+        "SERVICE": "SERVICE_ACTION"
+      }
+    },
+    "android": {
+      "retriesNumber": 4,
+      "delayWhileIdle": false,
+      "timeToLive": 3000,
+      "msgcnt": 3
+    }
+  },
+  "serviceHosts": {
+    "module1": {
+      "SSL" : false,
+      "host": "localhost:3000"
+    },
+    "moduleB1": {
+      "SSL" : false,
+      "host": "localhost:1000"
+    }
+  },
+  "rest": {
+    "deeplogging": false
+  },
+  "mongodb": {
+    "host": "mongodb://username:pass@URL1:27017,username:pass@URL2:27017/",
+    "db": "DB NAME",
+    "options" : {
+      "db": {
+        "native_parser": true
+      },
+      "server": {
+        "auto_reconnect": true,
+        "poolSize": 5,
+        "socketOptions" : { "keepAlive": 1 }
+      },
+      "replset": {
+        "readPreference": "secondaryPreferred",
+        "strategy": "ping",
+        "rs_name": "RS NAME",
+        "socketOptions" : { "keepAlive": 1 }
+      }
+    }
+  },
+  "S3": {
+    "bucket": "BUCKET NAME",
+    "userfolder": "DEV",
+    "accessKey": "ACCES KEY",
+    "secretKey": "SECREAT KEY",
+    "region": "us-east-1",
+    "expireDays": 90
+  },
+  "accessToken": {
+    "expirationTime": 21600
+  },
+  "ws": {
+    "deeplogging": false,
+    "onCloseRegisterToSip": true,
+    "mqprefix": "WS.",
+    "resendInterval": 1000,
+    "deleteInterval": false,
+    "maxResendInterval": 600000
+  },
+  "mq": {
+    "host": "URL",
+    "login": "username",
+    "password": "password",
+    "exchange": "user-exchange",
+    "maxChannelsInConnection": 10000,
+    "topic": {
+      "base": "",
+      "notImportant": "NOT_IMPORTANT",
+      "debug": "debugListener"
+    },
+    "deeplogging": false,
+    "queueOptions": {
+      "durable": true,
+      "persistent": true,
+      "autoDelete": false
+    },
+    "sendingOptions": {
+      "persistent": true
+    },
+    "debugQueueOptions": {
+      "durable": false,
+      "autoDelete": true
+    },
+    "sipQueueOptions": {
+      "durable": false,
+      "autoDelete": true
+    },
+    "heartbeat": 300
+  },
+  "clustering": {
+    "enabled": false
+  },
+  "carrier": {
+    "pooling": true,
+    "pullInterval": 5000,
+    "deeplogging": false
+  },
+  "debug": {
+    "mqprefix": "DEB."
+  },
+  "logfile": true,
+  "log": {
+    "level" : "info",
+    "json" : false,
+    "logsToFile" : true,
+    "logsToDatabase": false,
+    "keepLogsDays" : 30,
+    "DB": {
+      "db": "mongodb://username:password@URL/primo_prod",
+      "collection": "logs"
+    }
+  },
+  "whitelist" : [""]
+}
