@@ -1,5 +1,6 @@
 .login-page {
-
+   background: url('../images/bg.jpg');
+    background-size: cover;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -7,7 +8,7 @@
 	bottom: 0;
 	overflow: auto;
 
-    background: @brand-primary;
+    //background: @brand-primary;
 
 	text-align: center;
 	color: #fff;
@@ -26,7 +27,52 @@
 	}
 
 	.form-content {
-		padding: 40px 0;
+		padding: 20px 0;
 	}
 
+}
+.login-page:after {
+	content: '';
+	display: block;
+	width: 100%;
+ 	background: rgba(0, 0, 0, 0.35);
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.form-box {
+	z-index: 9999;
+}
+.img-box {
+     border-radius: 50%;
+    border: 2px solid #4ad44f;
+    padding: 4px;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+.img-box img{
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+.btn-green{
+ width: 200px;
+    background: #4ad44f;
+    font-size: 20px;
+    padding: 7px 10px;
+    box-shadow: 1px 1px 9px 3px #504c4c;
+}
+.auth-link{
+	    display: inline-block;
+    margin-top: 20px;
+    font-size: 15px;
+    color: white;
+}
+.form-box h4 {
+    font-weight: 100;
+}
+.logout-link{
+    color: #4bd44f;
 }

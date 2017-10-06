@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var Schema   = mongoose.Schema;
+var Schema = mongoose.Schema;
 
 // module.exports = mongoose.model('Users', new Schema({
 // 	username: String,
@@ -13,5 +13,5 @@ var korisnici = new Schema({
   email: String
 });
 
-var Users      = mongoose.model('Users', korisnici);
+var Users = mongoose.model('Users', korisnici);
 module.exports = Users;

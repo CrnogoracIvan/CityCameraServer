@@ -7,7 +7,7 @@ var config = {
     "db": "citycamera_test"
   },
   "file" : {
-    "destination" : "./files"
+    "destination" : "C:/Users/Jelena/Desktop/CityCam/uploads"
   },
   "log": {
     "level" : "debug",

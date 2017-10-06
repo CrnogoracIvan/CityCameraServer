@@ -12,12 +12,12 @@ var gulp        = require('gulp'),
   es          = require('event-stream');
 
 
-gulp.task('apidoc', function () {
-  apidoc.exec({
+gulp.task('apidoc', function (done) {
+  apidoc({
     src: "./services/",
     dest: "doc/",
     includeFilters: ["apiconst.js", "router.js", "postLoader.js"]
-  });
+  },done);
 });
 
 gulp.task('build_js', function (cb) {
@@ -87,9 +87,9 @@ gulp.task('build_assets', function () {
     .pipe(flatten())
     .pipe(gulp.dest('./build/resources/fonts'));
   //copy icons
-  gulp.src('./public/resources/icons/**/*')
+  gulp.src('./public/resources/images/**/*')
     .pipe(flatten())
-    .pipe(gulp.dest('./build/resources/icons'));
+    .pipe(gulp.dest('./build/resources/images'));
 });
 
 

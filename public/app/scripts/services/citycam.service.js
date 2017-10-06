@@ -1,6 +1,7 @@
 app.service('CityCamService', function($http) {
   return {
     login: function(user) {
+
       return $http({
         method: 'POST',
         url: '/admin/login',

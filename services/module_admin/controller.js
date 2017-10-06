@@ -48,11 +48,13 @@ exports.login = function(req, res, callback) {
     if (err) {
       return callback(error('INTERNAL_ERROR'));
     }
-
+    console.log('111>')
+    console.log(data)
     if (data.password == req.body.password) {
       _generateToken(data, function(token) {
         data.token = token;
         return callback(null, data);
+     
       });
     } else {
       callback(error('INTERNAL_ERROR'));
@@ -72,4 +74,5 @@ var _generateToken = function(data, callback) {
     expiresIn: '24h' // expires in 24 hours
   });
   callback(token);
+  console.log(token);
 };
