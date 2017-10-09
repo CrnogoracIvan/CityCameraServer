@@ -33,7 +33,7 @@ var storage = multer.diskStorage({
   },
 
   filename: function (req, file, callback) {
-    console.log("file za upload je", file.originalname);
+   // console.log("file za upload je", file.originalname);
     callback(null, file.originalname);
   }
 });
@@ -61,8 +61,6 @@ exports.upload = function (req, res, next) {
 
 exports.folders = function (req, res, next) {
   var folders = [];
-  console.log('folder>>>>>>1 Folder link na dashbordu');
-  console.log(config.file.destination);
   fs.readdir(config.file.destination, function (err, files) {
     if (err) {
       throw err;
@@ -97,13 +95,12 @@ exports.folders = function (req, res, next) {
  * @param next
  */
 exports.files = function (req, res, next) {
-  console.log('folder>>>>>>2 klik na folder u listi folder');
   fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
     if (err) {
-      console.log(err);
       return next(err);
     }
     var files = [];
+
     filenames.forEach(function (file, index, list) {
 
       fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
@@ -121,6 +118,7 @@ exports.files = function (req, res, next) {
             path: "file/" + req.params.folder + "/file"
           });
         }
+
       });
     })
 
@@ -140,8 +138,7 @@ exports.file = function (req, res, next) {
  * @param res
  */
 exports.deleteFile = function (req, res, next) {
-  console.log('back-delete >>>>>>');
-  console.log(config.file.destination + "/" + req.body.file);
+  //console.log(config.file.destination + "/" + req.body.file);
   fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
     if (err) {
       next(err);

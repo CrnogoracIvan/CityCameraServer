@@ -1,40 +1,22 @@
 <div class="dashboard-page">
   <div class="container-fluid">
     <div class="row">
-
-      <div class="col-sm-3 col-md-2 sidebar clearfix">
-
+      <div class="col-sm-3 col-md-3 col-lg-2 sidebar clearfix">
         <div class="text-center">
           <h2 class="brand">OSC Admin panel <br>
           </h2>
-          <h4 class="admin">Hello,<span>{{user.username}}</span></h4>
-          <img src="resources/images/avatar.png" class="user-avatar"/><br/>
-          <a ng-click="logout()"
-             class="logout-link">Logout</a>
+          <h4 class="admin">Hello, <span> {{user.username}}</span></h4>
+          <img src="resources/images/avatar.png" class="user-avatar" /><br/>
+          <a ng-click="logout()" class="logout-link">Logout</a>
         </div>
-
-        <ul class="nav nav-sidebar">
-          <li ng-class="{active: $state.includes('statistic')}"><a
-            ui-sref="dashboard">Dashboard</a></li>
-          <li ng-class="{active: $state.includes('statistic')}"><a
-            ui-sref="folder">Folder</a></li>
-          <li ng-class="{active: $state.includes('statistic')}"><a
-            ui-sref="todo">Todo</a></li>
+        <ul class="nav nav-sidebar left-sidebar">
+          <li ng-class="{active: $state.includes('statistic')}"><a ui-sref="dashboard">Dashboard</a></li>
+          <li ng-class="{active: $state.includes('statistic')}"><a ui-sref="folder">Folder</a></li>
+          <li ng-class="{active: $state.includes('statistic')}"><a ui-sref="todo">Todo</a></li>
         </ul>
-
       </div>
-
-      <div
-        class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main wrapper clearfix"
-        ui-view>
+      <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 col-lg-10 col-lg-offset-2 main wrapper clearfix" ui-view>
       </div>
-
     </div>
   </div>
 </div>
-
-
-
-
-
-

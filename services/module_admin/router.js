@@ -12,14 +12,7 @@ router.post('/register', function(req, res, next) {
     res.json({isSucces: true});
   })
 });
-/* GET /todos listing. */
-router.get('/register', function(req, res, next) {
-  Todo.find(function (err, todos) {
-    if (err) return next(err);
-    res.json(todos);
 
-  });
-});
 router.post('/login', function(req, res, next) {
   controller.login(req, res, function(err, data) {
     if (err) {

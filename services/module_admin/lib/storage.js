@@ -14,7 +14,7 @@ exports.saveUser = function(username, data, callback) {
   });
   user.save(function(err) {
     if (err) {
-      return callback(error('INTERNAL_ERROR'));
+      return callback(err);
     }
     callback();
   });

@@ -1,5 +1,5 @@
 var storage = require('./lib/storage');
-var jwt     = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 
 /**
  * Register new user
@@ -7,26 +7,34 @@ var jwt     = require('jsonwebtoken');
  * @param res
  * @param callback
  */
-exports.register = function(req, res, callback) {
-  storage.getUser(req.body.username, function(err, data) {
+exports.register = function (req, res, callback) {
+  storage.getUser(req.body.username, function (err, data) {
     if (err) {
-      return callback(error('INTERNAL_ERROR'));
+      return callback(err);
     }
     if (data) {
-      return callback(error('ALREADY_REGISTERED'));
+      return callback({
+        message: 'Already registered '
+      }, err);
     }
     if (req.body.username == '') {
-      return callback(error('LENGTH_REQUIRED'));
+      return callback({
+        message: 'Lenght required'
+      }, err);
     }
     if (req.body.email == '') {
-      return callback(error('LENGTH_REQUIRED'));
+      return callback({
+        message: 'Lenght required'
+      }, err);
     }
-    if (req.body.pass == '') {
-      return callback(error('LENGTH_REQUIRED'));
+    if (req.body.password == '') {
+      return callback({
+        message: 'Lenght required'
+      }, err);
     }
-    storage.saveUser(req.body.username, req.body, function(err) {
+    storage.saveUser(req.body.username, req.body, function (err) {
       if (err) {
-        return callback(error('INTERNAL_ERROR'));
+        return callback(err);
       }
       callback();
     });
@@ -39,25 +47,28 @@ exports.register = function(req, res, callback) {
  * @param res
  * @param callback
  */
-exports.login = function(req, res, callback) {
-  storage.getUser(req.body.username, function(err, data) {
+exports.login = function (req, res, callback) {
+  storage.getUser(req.body.username, function (err, data) {
     if (!data) {
-      return callback(error('NOT_FOUND'));
+      return callback({
+        message: 'User not found'
+      }, err);
     }
     data = data.toJSON();
+
     if (err) {
-      return callback(error('INTERNAL_ERROR'));
+      return callback(err);
     }
-    console.log('111>')
-    console.log(data)
+
     if (data.password == req.body.password) {
-      _generateToken(data, function(token) {
+      _generateToken(data, function (token) {
         data.token = token;
         return callback(null, data);
-     
       });
     } else {
-      callback(error('INTERNAL_ERROR'));
+      return callback({
+        message: 'Password is wrong'
+      }, err);
     }
   });
 
@@ -69,10 +80,9 @@ exports.login = function(req, res, callback) {
  * @param callback
  * @private
  */
-var _generateToken = function(data, callback) {
+var _generateToken = function (data, callback) {
   var token = jwt.sign(data.username, config.security.secret, {
     expiresIn: '24h' // expires in 24 hours
   });
   callback(token);
-  console.log(token);
 };

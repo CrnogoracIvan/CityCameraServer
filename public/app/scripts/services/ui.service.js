@@ -3,7 +3,6 @@ app.service('UiService', function($rootScope, $window, SessionService, $http, $s
   return {
     init: function() {
       $rootScope.alerts = [];
-
       $rootScope.logout = function() {
         SessionService.destroySession();
       };

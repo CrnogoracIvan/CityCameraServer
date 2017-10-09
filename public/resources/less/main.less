@@ -34,7 +34,8 @@
 }
 
 html,body {
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: visible;
 }
 
 .input-date-picker {
@@ -64,4 +65,63 @@ html,body {
 	white-space: normal;
 	border-style: solid;
 	border-width: thin;
+}
+//===============================
+.dashboard-page .admin span{
+	text-transform: uppercase;
+}
+
+.file-box {
+    border: 1px solid #ecf0f1;
+    padding: 0px;
+    width: 200px;
+    float: left;
+    margin: 5px;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    background-color: #d0d0d0;
+}
+.file-box .info-box {
+    background-color: #1f1e1e;
+    color: white;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 3;
+    height: 36px;
+    min-height: 36px;
+    padding: 6px;
+    font-weight: bold;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.file-box .delete-button {
+    background-color: #4ad44f;
+    color: white;
+    border-radius: 1px;
+    border: 1px solid #3c3a3a;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 3px;
+    float: right;
+		width: 30%;
+		margin: 0;
+
+}
+.info-box span {
+		font-size: 12px;
+    white-space: normal;
+    font-weight: 100;
+    display: inline-block;
+    width: 70%;
+
+}
+.column {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
