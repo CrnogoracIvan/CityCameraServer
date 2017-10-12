@@ -4,8 +4,6 @@ var provider = require('./providers/');
 
 
 exports.upload = function (res, req, next) {
-  console.log('Usao sam u controler Upload')
-  provider.upload();
 };
 
 exports.folders = function (res, req, next) {
