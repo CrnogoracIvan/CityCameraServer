@@ -9,13 +9,10 @@ exports.upload = function (res, req, next) {
 };
 
 exports.folders = function (res, req, next) {
-  console.log('Usao sam u controler folders', provider)
-
-  provider.folders().then(function (result) {
-    console.log('result is', result)
-    res.json(result);
+  provider.folders(function(folders) {
+  res.status(200);
+   res.json({folders:folders})
   });
-  console.log('Zavrsio sam sam u controler folders')
 }
 
 
