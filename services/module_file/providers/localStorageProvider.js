@@ -87,3 +87,63 @@ exports.folders = function (callback) {
     callback(folders);
   });
 };
+/**
+ * List all files and folders
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.files = function (req, res, next) {
+  fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
+    if (err) {
+      return next(err);
+    }
+    var files = [];
+
+    filenames.forEach(function (file, index, list) {
+
+      fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
+        if (err) {
+          return next(err);
+        }
+        files.push({
+          filename: file,
+          content: content
+        });
+
+        if (index == list.length - 1) {
+          res.send({
+            files: files,
+            path: "file/" + req.params.folder + "/file"
+          });
+        }
+
+      });
+    })
+
+  });
+};
+
+/**
+ * Fetch file from specific path
+ */
+exports.file = function (req, res, next) {
+  //todo: empty
+};
+
+/**
+ * Delete a file by filename
+ * @param req
+ * @param res
+ */
+exports.deleteFile = function (req, res, next) {
+  //console.log(config.file.destination + "/" + req.body.file);
+  fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
+    if (err) {
+      next(err);
+    }
+    res.json({
+      isSuccess: true
+    });
+  });
+};
