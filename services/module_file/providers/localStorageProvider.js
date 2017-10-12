@@ -55,39 +55,35 @@ exports.upload = function () {
     });
 };
 
-exports.folders = function () {
- 
-    var deferred = Q.defer();
-    console.log('usao sam u local storage folders', deferred);
-    var folders = [];
+exports.folders = function (callback) {
+  var folders = [];
+  fs.readdir(config.file.destination, function (err, files) {
+    if (err) {
+      return err
+    }
+    //return empty list
+    if (files.length === 0) {
+      return ({
+        folders: folders
+      });
+    } else {
+      files.map(function (file) { // map() funckija kreira novi niz
+        console.log('Found file: ', file)
+        return path.join(config.file.destination, file); //path.join() pravi putanju, odnosno spaja putanjau od onoga sto joj prosledimo
+      }).filter(function (file) {
 
-    fs.readdir(config.file.destination, function (err, files) {
-        if (err) {
-            deferred.reject(new Error(error))
-        }
-        //return empty list
-        if (files.length === 0) {
-                deferred.resolve( { 
-                   folders: folders
-                });
-        } else {
-            files.map(function (file) { // map() funckija kreira novi niz
-                return path.join(config.file.destination, file); //path.join() pravi putanju, odnosno spaja putanjau od onoga sto joj prosledimo
-            }).filter(function (file) {
-                return fs.statSync(file).isDirectory();
-            }).forEach(function (file, index, list) {
-                file = path.basename(file);
-                folders.push(file);
+        return fs.statSync(file).isDirectory();
+      }).forEach(function (file, index, list) {
 
-                if (index == list.length - 1) {
-                    console.log('zavrsio sam sam u local strat folders2', folders)
-                        deferred.resolve( { 
-                           folders: folders
-                        });
-                }
-            });
+        file = path.basename(file);
+        folders.push(file);
+        if (index == list.length - 1) {
+          return ({
+            folders: folders
+          });
         }
-       
-    });
-    return deffered.promise;
+      });
+    }
+    callback(folders);
+  });
 };
