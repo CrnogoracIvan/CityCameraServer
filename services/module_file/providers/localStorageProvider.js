@@ -67,7 +67,9 @@ exports.folders = function () {
         }
         //return empty list
         if (files.length === 0) {
-            deferred.resolve( folders);
+                deferred.resolve( { 
+                   folders: folders
+                });
         } else {
             files.map(function (file) { // map() funckija kreira novi niz
                 return path.join(config.file.destination, file); //path.join() pravi putanju, odnosno spaja putanjau od onoga sto joj prosledimo
@@ -79,7 +81,9 @@ exports.folders = function () {
 
                 if (index == list.length - 1) {
                     console.log('zavrsio sam sam u local strat folders2', folders)
-                    deferred.resolve(folders);
+                        deferred.resolve( { 
+                           folders: folders
+                        });
                 }
             });
         }
