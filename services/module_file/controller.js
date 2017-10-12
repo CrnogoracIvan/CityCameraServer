@@ -2,7 +2,13 @@ var express = require("express");
 var error = require('../../lib/error').error;
 var provider = require('./providers/');
 
-
+/**
+ * Upload a file to a specific destination
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.upload = function (res, req, next) {
 };
 
