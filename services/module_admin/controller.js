@@ -1,6 +1,6 @@
 var storage = require('./lib/storage');
 var jwt = require('jsonwebtoken');
-
+var error = require('../../lib/error').error;
 /**
  * Register new user
  * @param req
@@ -10,31 +10,23 @@ var jwt = require('jsonwebtoken');
 exports.register = function (req, res, callback) {
   storage.getUser(req.body.username, function (err, data) {
     if (err) {
-      return callback(err);
+      return callback(error('INTERNAL_ERROR'));
     }
     if (data) {
-      return callback({
-        message: 'Already registered '
-      }, err);
+      return callback(error('ALREADY_REGISTERED'));
     }
     if (req.body.username == '') {
-      return callback({
-        message: 'Lenght required'
-      }, err);
+      return callback(error('LENGTH_REQUIRED'));
     }
     if (req.body.email == '') {
-      return callback({
-        message: 'Lenght required'
-      }, err);
+      return callback(error('LENGTH_REQUIRED'));
     }
     if (req.body.password == '') {
-      return callback({
-        message: 'Lenght required'
-      }, err);
+      return callback(error('LENGTH_REQUIRED'));
     }
     storage.saveUser(req.body.username, req.body, function (err) {
       if (err) {
-        return callback(err);
+        return callback(error('INTERNAL_ERROR'));
       }
       callback();
     });
@@ -50,25 +42,22 @@ exports.register = function (req, res, callback) {
 exports.login = function (req, res, callback) {
   storage.getUser(req.body.username, function (err, data) {
     if (!data) {
-      return callback({
-        message: 'User not found'
-      }, err);
+      return callback(error('NOT_FOUND'));
     }
     data = data.toJSON();
-
     if (err) {
-      return callback(err);
+      return callback(error('INTERNAL_ERROR'));
     }
 
     if (data.password == req.body.password) {
       _generateToken(data, function (token) {
         data.token = token;
+        console.log("login data + token: ", data)
         return callback(null, data);
+
       });
     } else {
-      return callback({
-        message: 'Password is wrong'
-      }, err);
+      callback(error('INTERNAL_ERROR'));
     }
   });
 

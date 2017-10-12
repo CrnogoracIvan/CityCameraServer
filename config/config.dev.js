@@ -20,7 +20,8 @@ var config = {
       "extension" : "log",
       "keepLogsDays" : 5
     }
-  }
+  },
+  "provider":"local"
 };
 
 

@@ -1,4 +1,5 @@
 var Users = require('./users');
+var error = require('../../../lib/error').error;
 
 /**
  * Store user to db
@@ -14,7 +15,7 @@ exports.saveUser = function(username, data, callback) {
   });
   user.save(function(err) {
     if (err) {
-      return callback(err);
+      return callback(error('INTERNAL_ERROR'));
     }
     callback();
   });

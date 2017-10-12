@@ -4,7 +4,6 @@ var router     = express.Router();
 
 router.post('/register', function(req, res, next) {
   controller.register(req, res, function(err) {
-
     if (err) {
       return next(err);
     }

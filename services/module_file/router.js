@@ -40,7 +40,7 @@ router.post('/upload',  controller.upload);
 
 router.get('/folders', secMidd.checkToken, controller.folders);
 
-router.get('/:folder/files/', secMidd.checkToken, controller.files);
+router.get('/:folder/files/', secMidd.checkToken , controller.files);
 
 router.get('/:folder/file/:filename', controller.file);
 

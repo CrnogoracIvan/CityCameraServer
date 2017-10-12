@@ -8,7 +8,6 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
   CityCamService.folder($scope.user)
     .then(function (result, status, headers) {
       $scope.folders = result.data.folders;
-    
     }, function (err) {
     UiService.warningDialog('Error register');
 
