@@ -19,7 +19,12 @@ exports.folders = function (res, req, next) {
   });
 }
 
-
+/**
+ * List all files and folders
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.files = function (req, res, next) {}
 /**
  * Fetch file from specific path
