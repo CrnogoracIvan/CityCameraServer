@@ -91,45 +91,43 @@ exports.folders = function (callback) {
  * List all files and folders
  * @param req
  * @param res
+ * @param next
  * @param callback
  */
-exports.files = function (req, res, callback) {
-    var folderData = {};
-    fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
-        var files = [];
+exports.files = function (req, res, next, callback) {
 
+  var files = [];
+  fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
+   
+    if (err) {
+      return next(err);
+    }
+
+    var filesData = {
+      files: files,
+      path: "file/" + req.params.folder + "/file"
+    };
+
+    if (filenames.length == 0) {
+      return callback(filesData);
+    }
+
+    filenames.forEach(function (file, index, list) {
+
+      fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
         if (err) {
-            return err;
+          return next(err);
         }
-
-        filenames.forEach(function (file, index, list) {
-
-            fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
-
-                if (err) {
-                    return err;
-                }
-
-                files.push({
-                    filename: file,
-                    content: content
-                });
-                folderData = {
-                    files: files,
-                    path: "file/" + req.params.folder + "/file"
-                };
-                if (index == list.length - 1) {
-                    console.log("==================");
-                    console.log(list.length);
-                    console.log("==================");
-                    callback(folderData);
-                }
-
-            });
-
-        })
-
-    });
+        files.push({
+          filename: file,
+          content: content
+        });
+        if (files.length - 1 === list.length - 1) {
+          return callback(filesData)
+        }
+      });
+    })
+  });
 };
 
 /**
@@ -143,6 +141,7 @@ exports.file = function (req, res, next) {
  * Delete a file by filename
  * @param req
  * @param res
+ * @param callback
  */
 exports.deleteFile = function (req, res, callback) {
     //console.log(config.file.destination + "/" + req.body.file);
