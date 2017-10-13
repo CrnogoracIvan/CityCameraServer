@@ -9,10 +9,10 @@ var provider = require('./providers/');
  * @param res
  * @param next
  */
-exports.upload = function (res, req, next) {
+exports.upload = function (req,res,next) {
 };
 
-exports.folders = function (res, req, next) {
+exports.folders = function (req,res, next) {
   provider.folders(function(folders) {
   res.status(200);
    res.json({folders:folders})
