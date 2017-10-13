@@ -21,7 +21,7 @@ exports.folders = function (req, res, next) {
 }
 
 exports.files = function (req, res, next) {
-  provider.files(req, res, function (files) {
+  provider.files(req, res, next, function (files) {
     res.status(200);
     res.json(files)
   });
