@@ -109,7 +109,7 @@ exports.files = function (req, res, next, callback) {
     };
 
     if (filenames.length == 0) {
-      return callback(filesData);
+      callback(filesData);
     }
 
     filenames.forEach(function (file, index, list) {
@@ -123,7 +123,7 @@ exports.files = function (req, res, next, callback) {
           content: content
         });
         if (files.length - 1 === list.length - 1) {
-          return callback(filesData)
+          callback(filesData)
         }
       });
     })
@@ -149,7 +149,7 @@ exports.deleteFile = function (req, res, callback) {
         if (err) {
             next(err);
         }
-        return callback();
+       callback();
     });
 
 };
