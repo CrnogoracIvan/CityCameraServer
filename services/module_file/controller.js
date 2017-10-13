@@ -9,23 +9,25 @@ var provider = require('./providers/');
  * @param res
  * @param next
  */
-exports.upload = function (req,res,next) {
-};
+exports.upload = function (req, res, next) {};
 
-exports.folders = function (req,res, next) {
-  provider.folders(function(folders) {
-  res.status(200);
-   res.json({folders:folders})
+exports.folders = function (req, res, next) {
+  provider.folders(function (folders) {
+    res.status(200);
+    res.json({
+      folders: folders
+    })
   });
 }
 
-/**
- * List all files and folders
- * @param req
- * @param res
- * @param next
- */
-exports.files = function (req, res, next) {}
+exports.files = function (req, res, next) {
+  provider.files(req, res, function (folderData) {
+    console.log("==u controlerr");
+    console.log(folderData.files.length);
+    res.status(200);
+    res.json(folderData)
+  });
+}
 /**
  * Fetch file from specific path
  */
@@ -39,5 +41,10 @@ exports.file = function (req, res, next) {
  * @param res
  */
 exports.deleteFile = function (req, res, next) {
-
+  provider.deleteFile(req, res, function () {
+    res.status(200);
+    res.json({
+      isSuccess: true
+    })
+  });
 };

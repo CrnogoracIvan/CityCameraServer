@@ -9,14 +9,14 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
     .then(function (result, status, headers) {
       $scope.folders = result.data.folders;
     }, function (err) {
-    UiService.warningDialog('Error register');
+      UiService.warningDialog('Error register');
 
     });
 
   $scope.upload = function (folder) {
     CityCamService.upload($scope.user)
       .then(function (data, status, headers) {
-          SessionService.storeSession(data.data.data);
+        SessionService.storeSession(data.data.data);
       });
   };
 
@@ -26,11 +26,13 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    */
   $scope.listFolder = function (folder) {
     $scope.folder = folder;
-
     CityCamService.listFolder(folder)
       .then(function (data) {
         $scope.path = data.data.path;
         $scope.files = data.data.files;
+        console.log('files', $scope.files);
+      }, function(err){
+        return err;
       });
 
   };
@@ -45,7 +47,7 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
         CityCamService.deleteFile($scope.folder + '/' + file.filename)
           .then(function (data, status, headers) {
             //console.log('This is files>>: ', $scope.files);
-           // console.log('This is folder>>: ', $scope.folder);
+            // console.log('This is folder>>: ', $scope.folder);
             var index = $scope.files.indexOf(file);
 
             $scope.files.splice(index, 1);
