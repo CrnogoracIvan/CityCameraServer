@@ -21,11 +21,9 @@ exports.folders = function (req, res, next) {
 }
 
 exports.files = function (req, res, next) {
-  provider.files(req, res, function (folderData) {
-    console.log("==u controlerr");
-    console.log(folderData.files.length);
+  provider.files(req, res, function (files) {
     res.status(200);
-    res.json(folderData)
+    res.json(files)
   });
 }
 /**
