@@ -37,6 +37,11 @@
               <td>{{ file.filename }}</td>
             </tr>
           </tbody>
+          <tbody>
+            <tr ng-repeat="s3 in s3files">
+              <td>{{s3.Key}}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -47,6 +52,15 @@
           <img ng-src="data:image/png;base64,{{file.content}}" />
           <div class="info-box">
             <span>{{file.filename}}</span>
+            <button class="delete-button" ng-click="deleteFile(file)">
+              Delete
+            </button>
+          </div>
+        </div>
+        <div class="file-box" ng-repeat="s3 in s3files">
+          <img ng-src="{{s3.imgUrl}}" />
+          <div class="info-box">
+            <span>{{s3.Key}}</span>
             <button class="delete-button" ng-click="deleteFile(file)">
               Delete
             </button>

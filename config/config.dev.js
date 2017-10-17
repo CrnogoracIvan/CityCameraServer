@@ -21,7 +21,7 @@ var config = {
       "keepLogsDays" : 5
     }
   },
-  "provider":"local"
+  "provider":"s3"
 };
 
 
