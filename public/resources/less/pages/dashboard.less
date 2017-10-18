@@ -1,9 +1,5 @@
 
 .dashboard-page {
-  /*position: absolute; */
-  /* top: 0; */
-  /* left: 0; */
-  /* right: 0; */
   min-height: 100%;
   bottom: 0;
   background: #ecf0f1;
@@ -48,12 +44,98 @@
   .navbar-fixed-top {
     border: 0;
   }
+ .dash-title {
+  color: #6b6b6b;
 
+  margin-bottom: 34px;
+  margin-top: 0;
+  border-bottom: 1px solid #dcdada;
+ }
+ .nav-sidebar > li > a.activeLink {
+  background: #000000;
+  color: #4bd44f;
+ }
+ .nav-sidebar > li > a.activeLink:hover {
+  background: #000000;
+  color: #4bd44f;
+ }
+.btn-dash {
+  background: #4bd44f;
+  padding: 8px 23px;
+  margin-left: 10px;
+  display: inline-block;
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  box-shadow: 1px 2px 2px #aba9a9;
+}
+.btn-dash:hover {
+  background: #2E852E;
+  color: white;
+}
+.file-box {
+  border: 1px solid #ecf0f1;
+  padding: 0px;
+  width: 250px;
+  float: left;
+  margin: 5px;
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+  background-color: #d0d0d0;
+}
+.file-box .info-box {
+  background-color: #1f1e1e;
+  color: white;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 3;
+  height: 36px;
+  min-height: 36px;
+  padding: 6px;
+  font-weight: bold;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-box .delete-button {
+  background-color: #4ad44f;
+  color: white;
+  border-radius: 1px;
+  border: 1px solid #3c3a3a;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 3px;
+  float: right;
+  width: 30%;
+  margin: 0;
+
+}
+.info-box span {
+  font-size: 12px;
+  white-space: normal;
+  font-weight: 100;
+  display: inline-block;
+  width: 70%;
+
+}
+.tab-pane p {
+  margin-top: 17px;
+  border-bottom: 2px solid gainsboro;
+}
+.column {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
   /*
    * Sidebar
    */
 
-  /* Hide for mobile, show later */
+ 
   .sidebar {
 
     .user-avatar {
@@ -76,15 +158,9 @@
     }
   }
 
-  .nav.left-sidebar > li > a:hover, .nav.left-sidebar > li > a:focus,.nav.left-sidebar > li > a.active {
+  .nav.left-sidebar > li > a:hover {
       background: #000000;
       color: #4bd44f;
-  }
-  .nav-sidebar.left-sidebar > .active > a,
-  .nav-sidebar.left-sidebar > .active > a:hover,
-  .nav-sidebar.left-sidebar > .active > a:focus {
-    color: #fff;
-    background-color: #4ad44f;
   }
   .nav-sidebar > li > a {
     color: #ababab;
@@ -120,11 +196,14 @@
     color: #ffffff;
     background: #4bd44f;
   }
-
+  .nav-tabs {
+    border-bottom: 8px solid #4cd44f;
+  
+}
   .nav-tabs > li {
     float: left;
-    margin-bottom: 8px;
-    width: 50%;
+    margin-bottom: 0;
+    width: 100px;
   
 }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
@@ -133,7 +212,6 @@
     background-color: #4bd44f;
     border-bottom-color: transparent;
     cursor: default;
-    border-radius: 0;
     border: none; 
 }
 .nav-tabs > li > a {

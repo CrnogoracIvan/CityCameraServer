@@ -5,6 +5,11 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
   //set default view type
   $scope.viewType = 'list';
 
+  //hide/show img for local or s3 storage
+  $scope.localImg = false;
+  $scope.s3Img = true;
+  $scope.btnIsActive = false;
+
   CityCamService.folder($scope.user)
     .then(function (result, status, headers) {
       $scope.folders = result.data.folders;
@@ -28,11 +33,14 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
     $scope.folder = folder;
     CityCamService.listFolder(folder)
       .then(function (data) {
+        $scope.btnIsActive = !$scope.btnIsActive;
+        if (data.data.path != null) {
+          $scope.localImg = true;
+          $scope.s3Img = false;
+        }
         $scope.path = data.data.path;
         $scope.files = data.data.files;
-        console.log('files', $scope.files);
-        $scope.s3files= data.data.s3files;
-      }, function(err){
+      }, function (err) {
         return err;
       });
 
@@ -43,13 +51,23 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * @param file
    */
   $scope.deleteFile = function (file) {
+    console.log('path', file.content);
+    var check = file.content
+    var deleteFile;
+    var x = "http";
+    if (check.substring(0, x.length) !== x) {
+      deleteFile = $scope.folder + '/' + file.filename
+    } else {
+      deleteFile = file.filename
+    }
     UiService.confirmDialog('Delete file', 'Are you sure you want to delete this file?', function (answer) {
       if (answer === true) {
-        CityCamService.deleteFile($scope.folder + '/' + file.filename )
+        CityCamService.deleteFile(deleteFile)
           .then(function (data, status, headers) {
-            //console.log('This is files>>: ', $scope.files);
-            // console.log('This is folder>>: ', $scope.folder);
+            console.log('files to cut', $scope.files)
+
             var index = $scope.files.indexOf(file);
+            console.log('index', index)
             $scope.files.splice(index, 1);
             $rootScope.alert = {
               show: true,

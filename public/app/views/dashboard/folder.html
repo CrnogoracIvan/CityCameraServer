@@ -27,40 +27,28 @@
   </ul>
   <div class="tab-content">
     <div class="tab-pane" id="list" ng-class="(viewType=='list')? 'active':''">
-      <div class="col-md-2 column">
+      <div class="col-md-12 column">
         <table class="table table-striped">
           <thead>
             <th>Filename</th>
           </thead>
           <tbody>
             <tr ng-repeat="file in files">
-              <td>{{ file.filename }}</td>
-            </tr>
-          </tbody>
-          <tbody>
-            <tr ng-repeat="s3 in s3files">
-              <td>{{s3.Key}}</td>
+              <td><span class="glyphicon glyphicon-file"></span> {{ file.filename }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-
     <div class="tab-pane" id="grid" ng-class="(viewType=='grid')? 'active':''">
+      <p><b>List images</b> </p>
+      <hr>
       <div class="column">
         <div class="file-box" ng-repeat="file in files">
-          <img ng-src="data:image/png;base64,{{file.content}}" />
+          <img ng-src="data:image/png;base64,{{file.content}}" ng-if="localImg" />
+          <img ng-src="{{file.content}}" ng-if="s3Img" />
           <div class="info-box">
             <span>{{file.filename}}</span>
-            <button class="delete-button" ng-click="deleteFile(file)">
-              Delete
-            </button>
-          </div>
-        </div>
-        <div class="file-box" ng-repeat="s3 in s3files">
-          <img ng-src="{{s3.imgUrl}}" />
-          <div class="info-box">
-            <span>{{s3.Key}}</span>
             <button class="delete-button" ng-click="deleteFile(file)">
               Delete
             </button>

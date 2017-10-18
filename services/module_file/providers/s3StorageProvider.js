@@ -1,39 +1,11 @@
-// bucket: citycamera
-// accessKey: AKIAJM3IPDB7MOYMTXDQ
-// secretKey: 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
-// region:     eu-central-1
-
-
-// Read in the file, convert it to base64, store to S3
-// fs.readFile('C:/Users/Jelena/Desktop/CityCam/uploads/fol1/marketing.png', function (err, data) {
-//     console.log('>>>>',data)
-//     if (err) { throw err; }
-
-//     var base64data = new Buffer(data, 'binary');
-
-//     s3.putObject({
-//       Bucket: "citycamera",
-//       Key:'imgname',
-//       Body: base64data,
-//       ACL: 'public-read'
-//     },function (resp) {
-//       console.log(arguments);
-//       console.log('Successfully uploaded package.');
-//     });
-
-//   });
-var express = require("express");
+var express = require('express');
 var AWS = require('aws-sdk');
-const fs = require("fs"); // from node.js
-const path = require("path"); // from node.js
-AWS.config.update({
-    accessKeyId: 'AKIAJM3IPDB7MOYMTXDQ',
-    secretAccessKey: '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',
-    region: 'eu-central-1'
-});
+const fs = require("fs");
+const path = require("path");
+AWS.config.update(config.aws);
 var s3 = new AWS.S3();
 var params = {
-    Bucket: 'citycamera'
+    Bucket: config.bucketName
 };
 exports.folders = function (callback) {
     var folders = [];
@@ -42,7 +14,9 @@ exports.folders = function (callback) {
             return err
         } else {
             data.Buckets.forEach(function (file) {
-                folders.push(file.Name)
+                if (file.Name == config.bucketName) {
+                    folders.push(file.Name)
+                }
                 return ({
                     folders: folders
                 });
@@ -51,50 +25,64 @@ exports.folders = function (callback) {
         }
     });
 };
-exports.files = function (callback) {
-
+exports.files = function (req, res, next, callback) {
     var files = [];
     s3.listObjects(params, function (err, data) {
+        var filesData = {
+            files: files,
+            path: null
+        };
         if (err) {
-            return err
+            return err;
         } else {
             var bucketContents = data.Contents;
             bucketContents.forEach(function (file, index) {
                 var urlParams = {
-                    Bucket: 'citycamera',
+                    Bucket: config.bucketName,
                     Key: bucketContents[index].Key
                 };
                 s3.getSignedUrl('getObject', urlParams, function (err, url) {
                     files.push({
-                        imgUrl: url,
-                        Key: bucketContents[index].Key
+                        filename: bucketContents[index].Key,
+                        content: url
                     });
                     if (bucketContents.length - 1 === index) {
-                        callback(files);
+                        callback(filesData);
                     }
                 });
             })
         }
     });
 };
-
 exports.deleteFile = function (req, res, callback) {
-    s3.listObjects(params, function (err, data) {
+    console.log('req.body.file', req.body.file);
+    var urlParams = {
+        Bucket: config.bucketName,
+        Key: req.body.file
+    };
+    s3.deleteObject(urlParams, function (err, data) {
         if (err) {
             return err
         } else {
-            var bucketContents = data.Contents;
-            bucketContents.forEach(function (file, index) {
-                var urlParams = {
-                    Bucket: 'citycamera',
-                    Key: bucketContents[index].Key
-                };
-                s3.deleteObject(urlParams, function (err, data) {
-                    if (err) console.log(err, err.stack); // an error occurred
-                    else console.log(data); // successful response
-                    callback();
-                });
-            })
+            callback();
         }
     });
 };
+
+// fs.readFile('C:/Users/Jelena/Desktop/CityCam/uploads/fol1/middleLogo1.png', function (err, data) {
+//     console.log('>>>>', data)
+//     if (err) {
+//         throw err;
+//     }
+//     var base64data = new Buffer(data, 'binary');
+//     s3.putObject({
+//         Bucket: 'citycamera',
+//         Key: 'middleLogo1.png',
+//         Body: base64data,
+//         ACL: 'public-read',
+
+//     }, function (resp) {
+//         console.log(arguments);
+//         console.log('Successfully uploaded package.');
+//     });
+// });
