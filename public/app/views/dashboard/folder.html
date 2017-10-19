@@ -1,17 +1,17 @@
 <h1 class="dash-title">List files and folders</h1>
 <div class="folders-container col-lg-2">
   <p class="tb-title"><b>List folders</b> </p>
-  <table class="folder-table">
-    <tbody>
-      <tr ng-repeat="folder in folders">
-        <td class="md-col-5" colspan="5">
-          <button type="button" class="btn btn-link" ng-click="listFolder(folder)">
+  <div class="folder-table">
+    <ul>
+      <li ng-repeat="folder in folders" ng-click="select($index)" ng-class="{sel: $index == selected}">
+        <div class="md-col-5">
+          <a type="button" class="btn btn-link" ng-click="listFolder(folder)">
           <span class="glyphicon glyphicon-folder-close"></span>{{folder}}
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
 </div>
 <div class="col-lg-10 tabs-conteiner">
   <ul class="nav nav-tabs">

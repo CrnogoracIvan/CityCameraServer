@@ -138,6 +138,7 @@
     background: #cacaca;
     border: 1px solid #c7c7c7
 }
+
 table.table-striped {
     width: 100%;
 }
@@ -158,9 +159,12 @@ table.table-striped > tbody > tr:nth-of-type(odd) {
 }
 .folders-container {
   background: #b6b6b6;
-
   padding-top: 20px;
   padding-bottom: 3px;
+}
+.folder-table .sel {
+  background:#4ad44f;
+  color: white;
 }
   /*
    * Sidebar
@@ -203,28 +207,35 @@ table.table-striped > tbody > tr:nth-of-type(odd) {
     width: 100%;
     margin-bottom: 29px;
   }
-  .folder-table th {
-    text-align: -webkit-auto;
-    text-transform: uppercase;
-    border: none;
+  .folder-table ul {
+    padding: 0;
   }
-  .folder-table td {
-    border: none;
-  }
-  .folder-table button{
+  .folder-table ul li{
+    list-style: none;
     border-color: transparent;
     width: 100%;
     height: 100%;
-    color: #4ad44f;
     background: #dbdbdb;
     white-space: normal;
     margin: 5px 0;
 }
- 
-  .folder-table button:hover,  .folder-table button:focus{
-    color: #ffffff;
-    background: #4bd44f;
-  }
+.folder-table ul li a{
+    display: block;
+    width: 100%;
+    color: #4ad44f;
+    text-decoration: none;
+}
+.folder-table ul li a:hover {
+  background:#4ad44f;
+  color: white;
+}
+.folder-table .sel a {
+  color: white;
+}
+a .glyphicon {
+  float: left;
+  color: #3c3a3a;
+}
   .nav-tabs {
     border-bottom: 8px solid #4cd44f;
   
@@ -250,13 +261,11 @@ table.table-striped > tbody > tr:nth-of-type(odd) {
   border: none; 
   border-radius:none;
 }
+
 .nav-tabs > li > a:hover {
       background-color: rgb(226, 226, 226);
       }
-button .glyphicon {
-  float: left;
-  color: #3c3a3a;
-}
+
   @media (min-width: 768px) {
     .sidebar {
       position: fixed;

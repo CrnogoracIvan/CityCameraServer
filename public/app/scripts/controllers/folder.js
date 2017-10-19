@@ -30,6 +30,13 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * @param folder - folder name
    */
   $scope.listFolder = function (folder) {
+
+    $scope.selected = 0;
+
+    $scope.select = function (index) {
+      $scope.selected = index;
+    };
+
     $scope.folder = folder;
     CityCamService.listFolder(folder)
       .then(function (data) {
@@ -64,10 +71,7 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
       if (answer === true) {
         CityCamService.deleteFile(deleteFile)
           .then(function (data, status, headers) {
-            console.log('files to cut', $scope.files)
-
             var index = $scope.files.indexOf(file);
-            console.log('index', index)
             $scope.files.splice(index, 1);
             $rootScope.alert = {
               show: true,
