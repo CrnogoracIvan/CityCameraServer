@@ -55,7 +55,7 @@ exports.files = function (req, res, next, callback) {
     });
 };
 exports.deleteFile = function (req, res, callback) {
-    console.log('req.body.file', req.body.file);
+    //console.log('req.body.file', req.body.file);
     var urlParams = {
         Bucket: config.bucketName,
         Key: req.body.file

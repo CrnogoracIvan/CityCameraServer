@@ -1,19 +1,15 @@
-
 .dashboard-page {
   min-height: 100%;
   bottom: 0;
-  background: #ecf0f1;
+  background: #d0d0d0;
   color: #666;
-
   /*
    * Base structure
    */
-
   .warning {
     color: red;
     margin-bottom: 50px;
   }
-
   .warning-search {
     color: red;
     margin-right: 158px;
@@ -31,12 +27,10 @@
   /*
    * Global add-ons
    */
-
   .sub-header {
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
   }
-
   /*
    * Top navigation
    * Hide default border to remove 1px line.
@@ -45,11 +39,14 @@
     border: 0;
   }
  .dash-title {
+  font-size: 27px;
+  text-transform: uppercase;
   color: #6b6b6b;
-
   margin-bottom: 34px;
   margin-top: 0;
-  border-bottom: 1px solid #dcdada;
+  border-bottom: 1px solid #ababab;
+
+
  }
  .nav-sidebar > li > a.activeLink {
   background: #000000;
@@ -82,7 +79,7 @@
   height: 250px;
   overflow: hidden;
   position: relative;
-  background-color: #d0d0d0;
+ background-color: #b6b6b6;
 }
 .file-box .info-box {
   background-color: #1f1e1e;
@@ -112,7 +109,6 @@
   float: right;
   width: 30%;
   margin: 0;
-
 }
 .info-box span {
   font-size: 12px;
@@ -120,28 +116,60 @@
   font-weight: 100;
   display: inline-block;
   width: 70%;
-
-}
-.tab-pane p {
-  margin-top: 17px;
-  border-bottom: 2px solid gainsboro;
 }
 .column {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
+.tb-title {
+    text-transform: uppercase;
+    display: block;
+    width: 100%;
+    background: #ababab;
+    padding: 8px 3px;
+    color: white;
+    border: 1px solid #b5b5b5;
+}
+.column .tb-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 6px 3px;
+    background: #cacaca;
+    border: 1px solid #c7c7c7
+}
+table.table-striped {
+    width: 100%;
+}
+table.table-striped > tbody > tr > td{
+padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: none;
+    color: #3c3a3a;
+}
+table.table-striped > tbody > tr:nth-of-type(odd) {
+      background-color: #e4e4e4;
+}
+.tabs-conteiner {
+  background: rgba(245, 245, 245, 0.2);
+  padding: 20px 20px 0px 20px;
+  min-height: 250px;
+}
+.folders-container {
+  background: #b6b6b6;
+
+  padding-top: 20px;
+  padding-bottom: 3px;
+}
   /*
    * Sidebar
    */
-
  
   .sidebar {
-
     .user-avatar {
       margin: 10px 0 10px 0;
     }
-
     .brand {
       padding: 15px 0;
       font-size: 26px;
@@ -149,7 +177,6 @@
     }
     color: #FFF;
     position: relative;
-
     h2 {
       font-weight: 300;
       small {
@@ -157,7 +184,6 @@
       }
     }
   }
-
   .nav.left-sidebar > li > a:hover {
       background: #000000;
       color: #4bd44f;
@@ -172,27 +198,30 @@
   .sidebar {
     position: relative;
     background: #3c3a3a;
-
   }
-
-  .folder .table th {
+  .folder-table {
+    width: 100%;
+    margin-bottom: 29px;
+  }
+  .folder-table th {
     text-align: -webkit-auto;
     text-transform: uppercase;
     border: none;
   }
-  .folder .table td {
+  .folder-table td {
     border: none;
   }
-  .folder .table td button{
+  .folder-table button{
     border-color: transparent;
     width: 100%;
     height: 100%;
-       color: #3c3a3a;
-    background: #ffffff;
+    color: #4ad44f;
+    background: #dbdbdb;
     white-space: normal;
+    margin: 5px 0;
 }
  
-  .folder .table td button:hover,  .folder .table td button:focus{
+  .folder-table button:hover,  .folder-table button:focus{
     color: #ffffff;
     background: #4bd44f;
   }
@@ -207,7 +236,6 @@
   
 }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-
      color: white;
     background-color: #4bd44f;
     border-bottom-color: transparent;
@@ -225,27 +253,10 @@
 .nav-tabs > li > a:hover {
       background-color: rgb(226, 226, 226);
       }
-
 button .glyphicon {
   float: left;
   color: #3c3a3a;
 }
-  @media (min-device-width: 481px) and (max-width: 768px) {
-    .warning-search {
-      color: red;
-      margin-right: 423px;
-    }
-
-    .accountBtn {
-      margin: 20px 5px 0 0;
-    }
-
-    .warning {
-      color: red;
-      margin-bottom: 50px;
-    }
-  }
-
   @media (min-width: 768px) {
     .sidebar {
       position: fixed;
@@ -259,23 +270,35 @@ button .glyphicon {
     background-color: #3c3a3a;
       border-right: 1px solid #eee;
     }
-
     .warning-search {
       color: red;
       margin-right: 295px;
     }
-
     .accountBtn {
       margin: 0 5px 0 12px;
     }
-
     .warning {
       color: red;
       margin-bottom: 50px;
     }
   }
-
-
+  @media only screen and (min-width : 1200px) { 
+    .tabs-conteiner {
+      background: rgba(245, 245, 245, 0.2);
+      min-height: 550px;
+      padding: 20px 20px 0px 20px;
+  }
+    .folders-container {
+      background: #b6b6b6;
+      min-height: 550px;
+      padding-top: 20px;
+      padding-bottom: 3px;
+  }
+  .tb-title {
+    margin-top: 58px;
+    margin-bottom: 5px;
+}
+  }
   /* Sidebar navigation */
   .nav-sidebar {
     margin-right: -21px;
@@ -291,23 +314,18 @@ button .glyphicon {
     background: #212020;
     margin: 1px;
   }
-
-
   /*
    * Main content
    */
-
   .main {
     position: relative;
     padding: 20px;
     overflow-x: hidden;
     overflow-y: auto;
   }
-
   /*
    * Placeholder dashboard ideas
    */
-
   .placeholders {
     margin-bottom: 30px;
     text-align: center;
@@ -322,7 +340,6 @@ button .glyphicon {
     display: inline-block;
     border-radius: 50%;
   }
-
   .bg-fade {
     font-size: 500px;
     color: rgba(0, 0, 0, 0.1);
@@ -330,17 +347,14 @@ button .glyphicon {
     right: -100px;
     top: 200px;
   }
-
   .wrapper {
     margin-top: 20px;
     .chart {
       margin: 20px 0;
     }
   }
-
  .btn-datepicker-active {
     background: #3ca2e0 !important;
     color: #fff !important;
  }
-
 }

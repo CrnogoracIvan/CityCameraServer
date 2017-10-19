@@ -1,22 +1,19 @@
-<div class="folder col-lg-2">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th colspan="2">Naziv foldera</th>
-      </tr>
-    </thead>
+<h1 class="dash-title">List files and folders</h1>
+<div class="folders-container col-lg-2">
+  <p class="tb-title"><b>List folders</b> </p>
+  <table class="folder-table">
     <tbody>
       <tr ng-repeat="folder in folders">
         <td class="md-col-5" colspan="5">
           <button type="button" class="btn btn-link" ng-click="listFolder(folder)">
-        <span class="glyphicon glyphicon-folder-close"></span>{{folder}}
-        </button>
+          <span class="glyphicon glyphicon-folder-close"></span>{{folder}}
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-<div class="col-lg-10">
+<div class="col-lg-10 tabs-conteiner">
   <ul class="nav nav-tabs">
     <li class="active">
       <a ng-click="toggleView('list')" type="button" data-toggle="tab">List
@@ -27,11 +24,9 @@
   </ul>
   <div class="tab-content">
     <div class="tab-pane" id="list" ng-class="(viewType=='list')? 'active':''">
-      <div class="col-md-12 column">
-        <table class="table table-striped">
-          <thead>
-            <th>Filename</th>
-          </thead>
+      <div class=" column">
+        <p class="tb-title"><b>List files</b> </p>
+        <table class="table-striped">
           <tbody>
             <tr ng-repeat="file in files">
               <td><span class="glyphicon glyphicon-file"></span> {{ file.filename }}</td>
@@ -41,9 +36,8 @@
       </div>
     </div>
     <div class="tab-pane" id="grid" ng-class="(viewType=='grid')? 'active':''">
-      <p><b>List images</b> </p>
-      <hr>
       <div class="column">
+        <p class="tb-title"><b>List images</b> </p>
         <div class="file-box" ng-repeat="file in files">
           <img ng-src="data:image/png;base64,{{file.content}}" ng-if="localImg" />
           <img ng-src="{{file.content}}" ng-if="s3Img" />

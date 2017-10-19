@@ -21,7 +21,7 @@ var config = {
       "keepLogsDays": 5
     }
   },
-  "provider": "local",
+  "provider": "s3",
   "aws": {
     "accessKeyId": "AKIAJM3IPDB7MOYMTXDQ",
     "secretAccessKey": "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",
