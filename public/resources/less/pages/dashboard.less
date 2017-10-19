@@ -174,7 +174,7 @@ table.table-striped > tbody > tr:nth-of-type(odd) {
       margin: 10px 0 10px 0;
     }
     .brand {
-      padding: 15px 6px;
+      padding: 15px 6px 28px 6px;
       margin-top: 0;
       font-size: 25px;
       color: #4bd44f;
@@ -224,19 +224,27 @@ table.table-striped > tbody > tr:nth-of-type(odd) {
 .folder-table ul li a{
     display: block;
     width: 100%;
-    color: #4ad44f;
+    color: #3c3b3b;
     text-decoration: none;
+    text-align: left;
 }
 .folder-table ul li a:hover {
   background:#4ad44f;
   color: white;
 }
+.folder-table ul li a:hover .glyphicon {
+  color: white;
+}
 .folder-table .sel a {
+  color: white;
+}
+.folder-table .sel a .glyphicon  {
   color: white;
 }
 a .glyphicon {
   float: left;
   color: #3c3a3a;
+  padding-right: 5px;
 }
   .nav-tabs {
     border-bottom: 8px solid #4cd44f;
