@@ -2,7 +2,9 @@ var express = require('express');
 var AWS = require('aws-sdk');
 const fs = require("fs");
 const path = require("path");
-AWS.config.update(config.aws);
+var awsCredentials =fs.readFileSync(config.awsCredentials.destination);
+var configdata = JSON.parse(awsCredentials);
+AWS.config.update(configdata);
 var s3 = new AWS.S3();
 var params = {
     Bucket: config.bucketName

@@ -22,10 +22,8 @@ var config = {
     }
   },
   "provider": "s3",
-  "aws": {
-    "accessKeyId": "AKIAJM3IPDB7MOYMTXDQ",
-    "secretAccessKey": "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",
-    "region": "eu-central-1"
+  "awsCredentials": {
+    "destination": "C:/Users/Jelena/Desktop/CityCam/awsCredentials/credentials.json"
   },
   "bucketName": "citycamera"
 };
