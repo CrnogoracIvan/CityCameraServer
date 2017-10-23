@@ -19,7 +19,6 @@ var Q = require("q");
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
         console.log("storage destnation function");
-        callback(null, config.file.destination)
         fs.exists(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (exists) {
             if (exists) {
                 callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
