@@ -9,6 +9,16 @@ var s3 = new AWS.S3();
 var params = {
     Bucket: config.bucketName
 };
+
+// s3.getSignedUrl('putObject', {
+//     Bucket: config.bucketName,
+//     Expires: 60*60,
+//     Key: 'myKey'
+// }, function (err, url) {
+//     console.log(url);
+// });
+
+exports.uploadAws  = function (req, res, next) {};
 exports.folders = function (callback) {
     var folders = [];
     s3.listBuckets(function (err, data) {

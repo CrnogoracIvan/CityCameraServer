@@ -21,7 +21,7 @@ var config = {
       "keepLogsDays": 5
     }
   },
-  "provider": "s3",
+  "provider": "local",
   "awsCredentials": {
     "destination": "C:/Users/Jelena/Desktop/CityCam/awsCredentials/credentials.json"
   },

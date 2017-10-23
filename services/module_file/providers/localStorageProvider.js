@@ -19,6 +19,7 @@ var Q = require("q");
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
         console.log("storage destnation function");
+        callback(null, config.file.destination)
         fs.exists(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (exists) {
             if (exists) {
                 callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
@@ -34,24 +35,26 @@ var storage = multer.diskStorage({
             }
         });
     },
-
     filename: function (req, file, callback) {
-        // console.log("file za upload je", file.originalname);
-        callback(null, file.originalname);
+        console.log("file za upload je", file);
+        callback(null, file.originalname)
     }
+
 });
 // **** end of creating folder **** //
 
 var upload = multer({
     storage: storage
-}).single("userphoto"); // .single smesta file  fo
+}).single("userphoto");
 
-exports.upload = function () {
+
+exports.upload = function (req, res, callback) {
     upload(req, res, function (err) {
         if (err) {
-            return res.end("Error uploading file.", err);
+            console.log('errr', err)
+            return err;
         }
-        res.end("File is uploaded");
+        callback()
     });
 };
 
@@ -96,38 +99,38 @@ exports.folders = function (callback) {
  */
 exports.files = function (req, res, next, callback) {
 
-  var files = [];
-  fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
-   
-    if (err) {
-      return next(err);
-    }
+    var files = [];
+    fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
 
-    var filesData = {
-      files: files,
-      path: "file/" + req.params.folder + "/file"
-    };
-
-    if (filenames.length == 0) {
-      callback(filesData);
-    }
-
-    filenames.forEach(function (file, index, list) {
-
-      fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
         if (err) {
-          return next(err);
+            return next(err);
         }
-        files.push({
-          filename: file,
-          content: content
-        });
-        if (files.length - 1 === list.length - 1) {
-          callback(filesData)
+
+        var filesData = {
+            files: files,
+            path: "file/" + req.params.folder + "/file"
+        };
+
+        if (filenames.length == 0) {
+            callback(filesData);
         }
-      });
-    })
-  });
+
+        filenames.forEach(function (file, index, list) {
+
+            fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
+                if (err) {
+                    return next(err);
+                }
+                files.push({
+                    filename: file,
+                    content: content
+                });
+                if (files.length - 1 === list.length - 1) {
+                    callback(filesData)
+                }
+            });
+        })
+    });
 };
 
 /**
@@ -149,7 +152,7 @@ exports.deleteFile = function (req, res, callback) {
         if (err) {
             next(err);
         }
-       callback();
+        callback();
     });
 
 };

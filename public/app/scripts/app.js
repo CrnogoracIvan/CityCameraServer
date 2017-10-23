@@ -39,9 +39,16 @@ var app = angular.module('citycamera', [
       .state('upload', {
         url: '/upload',
         isPublic: true,
-        parent: 'base',
+        parent: 'dashboard',
         templateUrl: '/partials/upload.html',
-        controller: 'UploadCtrl'
+        controller: 'FolderCtrl'
+      })
+      .state('uploadAws', {
+        url: '/uploadAws',
+        isPublic: true,
+        parent: 'dashboard',
+        templateUrl: '/partials/upload.html',
+        controller: 'FolderCtrl'
       })
       .state('showFile', {
         url: '/showFile',
