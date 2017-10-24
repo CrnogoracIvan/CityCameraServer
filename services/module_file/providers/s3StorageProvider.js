@@ -2,7 +2,7 @@ var express = require('express');
 var AWS = require('aws-sdk');
 const fs = require("fs");
 const path = require("path");
-var awsCredentials =fs.readFileSync(config.awsCredentials.destination);
+var awsCredentials = fs.readFileSync(config.awsCredentials.destination);
 var configdata = JSON.parse(awsCredentials);
 AWS.config.update(configdata);
 var s3 = new AWS.S3();
@@ -10,15 +10,37 @@ var params = {
     Bucket: config.bucketName
 };
 
-// s3.getSignedUrl('putObject', {
-//     Bucket: config.bucketName,
-//     Expires: 60*60,
-//     Key: 'myKey'
-// }, function (err, url) {
-//     console.log(url);
-// });
 
-exports.uploadAws  = function (req, res, next) {};
+
+// var params2 = {
+//     Bucket: config.bucketName,
+//     Key: 'test',
+//     Expires: 30000,
+//     ContentType: 'multipart/form-data',
+//       ACL: 'public-read'
+// };
+// var url = s3.getSignedUrl('putObject', params2);
+
+//console.log(url)
+exports.uploadAws = function (req, res, callback) {
+
+   // req.body.file
+    var options = {
+        Bucket: config.bucketName,
+        Key: req.body.file,
+        Expires: 6000,
+        ContentType: 'multipart/form-data',
+        ACL: 'public-read'
+    }
+
+    s3.getSignedUrl('putObject', options, function (err, url) {
+        console.log('in strategy', url)
+        if (err) {
+            return callback(err);
+        }
+        callback(url);
+    })
+}
 exports.folders = function (callback) {
     var folders = [];
     s3.listBuckets(function (err, data) {

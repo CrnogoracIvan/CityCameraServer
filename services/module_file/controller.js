@@ -11,7 +11,14 @@ exports.upload = function (req, res, next) {
     })
   });
 };
-exports.uploadAws  = function (req, res, next) {};
+exports.uploadAws  = function (req, res, next) {
+  console.log('in ctrl')
+  provider.uploadAws(req, res, function (data) {
+    console.log('in ctrl inside',data)
+    res.status(200);
+    res.json(data)
+  });
+};
 exports.folders = function (req, res, next) {
   provider.folders(function (folders) {
     res.status(200);
@@ -22,6 +29,7 @@ exports.folders = function (req, res, next) {
 };
 exports.files = function (req, res, next) {
     provider.files(req, res, next, function (files) {
+      ///console.log('files...........',files)
       res.status(200);
       res.json(files);
     }); 

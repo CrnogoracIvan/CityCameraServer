@@ -50,13 +50,6 @@ var app = angular.module('citycamera', [
         templateUrl: '/partials/upload.html',
         controller: 'FolderCtrl'
       })
-      .state('showFile', {
-        url: '/showFile',
-        isPublic: true,
-        parent: 'folder',
-        templateUrl: '/partials/showDile.html',
-        controller: 'FolderCtrl'
-      })
       .state('dashboard', {
         url: '/dashboard',
         isPublic: false,

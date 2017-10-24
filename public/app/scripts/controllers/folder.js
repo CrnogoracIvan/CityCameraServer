@@ -15,7 +15,6 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
       $scope.folders = result.data.folders;
     }, function (err) {
       UiService.warningDialog('Error register');
-
     });
 
   $scope.upload = function (folder) {
@@ -91,4 +90,6 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
   $scope.toggleView = function (type) {
     $scope.viewType = type;
   };
+
+  
 });
