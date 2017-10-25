@@ -2,10 +2,15 @@ var express = require('express');
 var AWS = require('aws-sdk');
 const fs = require("fs");
 const path = require("path");
-var awsCredentials = fs.readFileSync(config.awsCredentials.destination);
-var configdata = JSON.parse(awsCredentials);
-AWS.config.update(configdata);
-var s3 = new AWS.S3();
+//json1
+// var awsCredentials = fs.readFileSync(config.awsCredentials.destination);
+// var configdata = JSON.parse(awsCredentials);
+// AWS.config.update(configdata);
+
+//json2 read from file
+AWS.config.loadFromPath(config.awsCredentials.destination);
+
+var s3 = new AWS.S3({ "region": "eu-central-1"});
 var params = {
     Bucket: config.bucketName
 };
@@ -14,14 +19,15 @@ var params = {
 
 // var params2 = {
 //     Bucket: config.bucketName,
-//     Key: 'test',
-//     Expires: 30000,
+//     Key: 'apa-hover.png',
+//     Expires: 300000,
 //     ContentType: 'multipart/form-data',
 //       ACL: 'public-read'
 // };
 // var url = s3.getSignedUrl('putObject', params2);
 
-//console.log(url)
+// console.log(url)
+
 exports.uploadAws = function (req, res, callback) {
 
    // req.body.file
@@ -44,6 +50,7 @@ exports.uploadAws = function (req, res, callback) {
 exports.folders = function (callback) {
     var folders = [];
     s3.listBuckets(function (err, data) {
+        console.log(err,data)
         if (err) {
             return err
         } else {
@@ -51,6 +58,7 @@ exports.folders = function (callback) {
                 if (file.Name == config.bucketName) {
                     folders.push(file.Name)
                 }
+         
                 return ({
                     folders: folders
                 });
