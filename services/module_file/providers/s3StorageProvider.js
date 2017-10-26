@@ -4,6 +4,8 @@ var fs = require("fs");
 var path = require("path");
 var request = require('request');
 var moment = require("moment");
+var multer = require("multer");
+var multerS3 = require("multer-s3");
 //json1
 // var awsCredentials = fs.readFileSync(config.awsCredentials.destination);
 // var configdata = JSON.parse(awsCredentials);
@@ -15,51 +17,46 @@ AWS.config.loadFromPath(config.awsCredentials.destination);
 var s3 = new AWS.S3({
     signatureVersion: "v4"
 });
+var uploadAws = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: config.bucketName,
+        key: function (req, file, cb) {
+           // console.log(file);
+            cb(null, file.originalname);
+        }
+    })
+}).array('userphoto', 1);
 
 exports.uploadAws = function (req, res, callback) {
-    var imgDataName =moment().format("MM_DD h:mm")
-   // console.log('req.body.file', req.body.file)
+    //Upload to AWS with Multer S3
+    uploadAws(req, res, function (err) {
+        if (err) {
+            console.log('errr', err)
+            return err;
+        }
+        callback();
+    });
+
+}
+exports.getPresignedUrl = function (req, res, callback) {
+    var imgDataName = moment().format("MM_DD h:mm");
+    // console.log('req.body.file', req.body.file)
     var options = {
         Bucket: config.bucketName,
         Key: imgDataName, // or req.body.file for POST
-        Expires: 600,//600 sec
-        // ContentType: 'multipart/form-data',
-        // ACL: 'public-read'
+        Expires: 600, //600 sec
     }
-
     s3.getSignedUrl('putObject', options, function (err, presigned_url) {
-        console.log('......presigned_url', presigned_url)
-
+        //console.log('presigned_url>>>>>>>>>>>>>', presigned_url)
         s3.getSignedUrl('putObject', options, function (err, presigned_url) {
-         
+
             if (err) {
                 return callback(err);
             }
             callback(presigned_url);
         })
-      
-        // if (err) {
-        //     console.log('AWS.S3().getSignedUrl error' + err);
-        // } else {
-        //     request({
-        //             method: 'PUT',
-        //             uri: presigned_url,
-        //             body:req.body.file,
-        //             headers: {
-        //                 'Content-Type': req.body.type
-        //             }
-        //             //fs.readFileSync('C:/Users/Jelena/Desktop/CityCam/uploads/fol1/dafed4.jpg'),
-        //         },
-        //         function (error, response, body) {
-        //             if (error) {
-        //                 console.error(error);
-        //             } else {
-        //                 console.log('upload successful:', body);
 
-        //             }
-        //         });
-        //           callback();
-        // }
     })
 }
 exports.folders = function (callback) {
@@ -85,7 +82,7 @@ exports.files = function (req, res, next, callback) {
     var params = {
         Bucket: config.bucketName
     };
-    
+
     var files = [];
     s3.listObjects(params, function (err, data) {
         var filesData = {

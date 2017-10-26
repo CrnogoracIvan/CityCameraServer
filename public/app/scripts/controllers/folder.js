@@ -17,12 +17,12 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
       UiService.warningDialog('Error register');
     });
 
-  $scope.upload = function (folder) {
-    CityCamService.upload($scope.user)
-      .then(function (data, status, headers) {
-        SessionService.storeSession(data.data.data);
-      });
-  };
+  // $scope.upload = function (folder) {
+  //   CityCamService.upload($scope.user)
+  //     .then(function (data, status, headers) {
+  //       SessionService.storeSession(data.data.data);
+  //     });
+  // };
 
   /**
    * Invoke City Camera to list files from specific folder
