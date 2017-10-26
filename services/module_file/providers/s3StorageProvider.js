@@ -1,56 +1,75 @@
 var express = require('express');
 var AWS = require('aws-sdk');
-const fs = require("fs");
-const path = require("path");
+var fs = require("fs");
+var path = require("path");
+var request = require('request');
+var moment = require("moment");
 //json1
 // var awsCredentials = fs.readFileSync(config.awsCredentials.destination);
 // var configdata = JSON.parse(awsCredentials);
 // AWS.config.update(configdata);
 
-//json2 read from file
+//json2 read from local file
 AWS.config.loadFromPath(config.awsCredentials.destination);
 
-var s3 = new AWS.S3({ "region": "eu-central-1"});
+var s3 = new AWS.S3({
+    region: "eu-central-1",
+    signatureVersion: "v4"
+});
 var params = {
     Bucket: config.bucketName
 };
 
-
-
-// var params2 = {
-//     Bucket: config.bucketName,
-//     Key: 'apa-hover.png',
-//     Expires: 300000,
-//     ContentType: 'multipart/form-data',
-//       ACL: 'public-read'
-// };
-// var url = s3.getSignedUrl('putObject', params2);
-
-// console.log(url)
-
 exports.uploadAws = function (req, res, callback) {
+    var imgDataName =moment().format("MM_DD h:mm")
+    console.log('req.body.file', req.body.file)
 
-   // req.body.file
     var options = {
         Bucket: config.bucketName,
-        Key: req.body.file,
-        Expires: 6000,
-        ContentType: 'multipart/form-data',
-        ACL: 'public-read'
+        Key: imgDataName,
+        Expires: 600,//600 sec
+        ContentType:  moment().format("YYYY_MM_DD")
+        // ContentType: 'multipart/form-data',
+        // ACL: 'public-read'
     }
 
-    s3.getSignedUrl('putObject', options, function (err, url) {
-        console.log('in strategy', url)
-        if (err) {
-            return callback(err);
-        }
-        callback(url);
+    s3.getSignedUrl('putObject', options, function (err, presigned_url) {
+        console.log('......presigned_url', presigned_url)
+
+        s3.getSignedUrl('putObject', options, function (err, presigned_url) {
+         
+            if (err) {
+                return callback(err);
+            }
+            callback(presigned_url);
+        })
+        // if (err) {
+        //     console.log('AWS.S3().getSignedUrl error' + err);
+        // } else {
+        //     request({
+        //             method: 'PUT',
+        //             uri: presigned_url,
+        //             body:req.body.file,
+        //             headers: {
+        //                 'Content-Type': req.body.type
+        //             }
+        //             //fs.readFileSync('C:/Users/Jelena/Desktop/CityCam/uploads/fol1/dafed4.jpg'),
+        //         },
+        //         function (error, response, body) {
+        //             if (error) {
+        //                 console.error(error);
+        //             } else {
+        //                 console.log('upload successful:', body);
+
+        //             }
+        //         });
+        //           callback();
+        // }
     })
 }
 exports.folders = function (callback) {
     var folders = [];
     s3.listBuckets(function (err, data) {
-        console.log(err,data)
         if (err) {
             return err
         } else {
@@ -58,7 +77,7 @@ exports.folders = function (callback) {
                 if (file.Name == config.bucketName) {
                     folders.push(file.Name)
                 }
-         
+
                 return ({
                     folders: folders
                 });

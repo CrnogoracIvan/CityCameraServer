@@ -29,13 +29,7 @@ app.service('CityCamService', function($http) {
         data: user
       });
     },
-    uploadAws: function(user) {
-      return $http({
-        method: 'POST',
-        url: '/file/uploadAws',
-        data: user
-      });
-    },
+
     deleteFile: function(filename) {
       return $http({
         method: 'DELETE',

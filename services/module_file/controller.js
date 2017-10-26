@@ -12,11 +12,9 @@ exports.upload = function (req, res, next) {
   });
 };
 exports.uploadAws  = function (req, res, next) {
-  console.log('in ctrl')
-  provider.uploadAws(req, res, function (data) {
-    console.log('in ctrl inside',data)
+  provider.uploadAws(req, res, function (url) {
     res.status(200);
-    res.json(data)
+    res.json(url);
   });
 };
 exports.folders = function (req, res, next) {
