@@ -37,8 +37,7 @@ var secMidd = require('../../middleware/securityMiddleware');
 
 
 router.post('/upload', controller.upload);
-router.post('/uploadAws', controller.uploadAws);
-router.get('/getPresignedUrl', controller.getPresignedUrl);
+router.get('/getUploadURL', controller.getUploadURL);
 
 router.get('/folders', secMidd.checkToken, controller.folders);
 router.get('/:folder/files/', secMidd.checkToken, controller.files);

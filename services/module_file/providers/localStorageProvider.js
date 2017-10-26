@@ -3,18 +3,6 @@ var multer = require("multer"); //is midleware for handling multipart/form-data,
 var moment = require("moment"); //is js library for parsing, manipulating, validating and formating data
 var fs = require("fs");
 var path = require("path"); //This module contains utilities for handling and transforming file paths.
-var Q = require("q");
-
-/**
- * Creating folder if not exists with date
- *
- * @param  {[type]} req       [description]
- * @param  {[type]} file      [description]
- * @param  {[type]} callback) {                                                                                                                                                                                                 
- * @param  {[type]} filename: function(req, file, callback)
- * @return {[type]}           [description]
- */
-
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -37,7 +25,6 @@ var storage = multer.diskStorage({
     }
 
 });
-// **** end of creating folder **** //
 
 var upload = multer({
     storage: storage
@@ -66,9 +53,9 @@ exports.folders = function (callback) {
                 folders: folders
             });
         } else {
-            files.map(function (file) { // map() funckija kreira novi niz
+            files.map(function (file) {
 
-                return path.join(config.file.destination, file); //path.join() pravi putanju, odnosno spaja putanjau od onoga sto joj prosledimo
+                return path.join(config.file.destination, file); 
             }).filter(function (file) {
 
                 return fs.statSync(file).isDirectory();
@@ -86,13 +73,7 @@ exports.folders = function (callback) {
         callback(folders);
     });
 };
-/**
- * List all files and folders
- * @param req
- * @param res
- * @param next
- * @param callback
- */
+
 exports.files = function (req, res, next, callback) {
 
     var files = [];
@@ -101,16 +82,13 @@ exports.files = function (req, res, next, callback) {
         if (err) {
             return next(err);
         }
-
         var filesData = {
             files: files,
             path: "file/" + req.params.folder + "/file"
         };
-
         if (filenames.length == 0) {
             callback(filesData);
         }
-
         filenames.forEach(function (file, index, list) {
 
             fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
@@ -129,21 +107,7 @@ exports.files = function (req, res, next, callback) {
     });
 };
 
-/**
- * Fetch file from specific path
- */
-exports.file = function (req, res, next) {
-    //todo: empty
-};
-
-/**
- * Delete a file by filename
- * @param req
- * @param res
- * @param callback
- */
 exports.deleteFile = function (req, res, callback) {
-    //console.log(config.file.destination + "/" + req.body.file);
     fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
         if (err) {
             next(err);

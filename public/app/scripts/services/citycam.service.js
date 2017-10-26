@@ -1,7 +1,6 @@
 app.service('CityCamService', function($http) {
   return {
     login: function(user) {
-
       return $http({
         method: 'POST',
         url: '/admin/login',
@@ -22,14 +21,6 @@ app.service('CityCamService', function($http) {
         data: user
       });
     },
-    upload: function(user) {
-      return $http({
-        method: 'POST',
-        url: '/file/upload',
-        data: user
-      });
-    },
-
     deleteFile: function(filename) {
       return $http({
         method: 'DELETE',
