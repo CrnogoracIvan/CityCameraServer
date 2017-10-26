@@ -38,7 +38,7 @@ router.delete('/delete', secMidd.checkToken, controller.deleteFile);
 
 router.post('/upload',  controller.upload);
 
-router.post('/uploadAws',  controller.uploadAws);
+router.get('/uploadAws',  controller.uploadAws);
 router.get('/folders', secMidd.checkToken, controller.folders);
 
 router.get('/:folder/files/', secMidd.checkToken , controller.files);

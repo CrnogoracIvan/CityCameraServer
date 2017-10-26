@@ -13,22 +13,16 @@ var moment = require("moment");
 AWS.config.loadFromPath(config.awsCredentials.destination);
 
 var s3 = new AWS.S3({
-    region: "eu-central-1",
     signatureVersion: "v4"
 });
-var params = {
-    Bucket: config.bucketName
-};
 
 exports.uploadAws = function (req, res, callback) {
     var imgDataName =moment().format("MM_DD h:mm")
-    console.log('req.body.file', req.body.file)
-
+   // console.log('req.body.file', req.body.file)
     var options = {
         Bucket: config.bucketName,
-        Key: imgDataName,
+        Key: imgDataName, // or req.body.file for POST
         Expires: 600,//600 sec
-        ContentType:  moment().format("YYYY_MM_DD")
         // ContentType: 'multipart/form-data',
         // ACL: 'public-read'
     }
@@ -43,6 +37,7 @@ exports.uploadAws = function (req, res, callback) {
             }
             callback(presigned_url);
         })
+      
         // if (err) {
         //     console.log('AWS.S3().getSignedUrl error' + err);
         // } else {
@@ -87,6 +82,10 @@ exports.folders = function (callback) {
     });
 };
 exports.files = function (req, res, next, callback) {
+    var params = {
+        Bucket: config.bucketName
+    };
+    
     var files = [];
     s3.listObjects(params, function (err, data) {
         var filesData = {
