@@ -7,7 +7,7 @@ var config = {
     "db": "citycamera_test"
   },
   "file": {
-    "destination": "C:/Users/Jelena/Desktop/CityCam/uploads"
+    "destination": "LOCAL STORAGE FILES LOCATION"
   },
   "log": {
     "level": "debug",
@@ -23,9 +23,10 @@ var config = {
   },
   "provider": "s3",
   "awsCredentials": {
-    "destination": "C:/Users/Jelena/Desktop/CityCam/awsCredentials/credentials.json"
+    "destination": "aws.json"
   },
-  "bucketName": "citycamera"
+  "bucketName": "citycamera",
+  "serverURL": "http://localhost:3000"
 };
 
 

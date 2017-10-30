@@ -34,10 +34,36 @@ var secMidd = require('../../middleware/securityMiddleware');
  }
  *
  */
-
-
 router.post('/upload', controller.upload);
-router.get('/getUploadURL', controller.getUploadURL);
+
+/**
+ * @api {post} file/getUploadURL Get Upload URL
+ * @apiVersion 0.3.0
+ * @apiName getUploadURL
+ * @apiGroup File
+ * @apiDescription return the URL for image upload
+ *
+ * @apiParam (body) {String} fileName Name of the File
+ * @apiParam (body) {String} fileExt File extension
+ *
+ * @apiError error Internal server error.
+ *
+ * @apiSampleRequest /file/getUploadURL
+ *
+ * @apiParamExample {json} Request-Example:
+ {
+    "fileName" : "some_file",
+    "fileExt" : "jpg"
+ }
+ *
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200
+ {
+    {"url" : "upload url"}
+ }
+ *
+ */
+router.post('/getUploadURL', controller.getUploadURL);
 
 router.get('/folders', secMidd.checkToken, controller.folders);
 router.get('/:folder/files/', secMidd.checkToken, controller.files);

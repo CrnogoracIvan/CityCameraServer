@@ -1,4 +1,3 @@
-var express = require("express");
 var error = require('../../lib/error').error;
 var provider = require('./providers/');
 
@@ -13,9 +12,13 @@ exports.upload = function (req, res, next) {
   });
 };
 exports.getUploadURL = function (req, res, next) {
-  provider.getUploadURL(req, res, function (url) {
-    res.status(200);
-    res.json(url);
+  provider.getUploadURL(req, res, function (err, urlJson) {
+    if (err){
+      //TODO error handling
+    } else {
+      res.status(200);
+      res.json(urlJson);
+    }
   });
 };
 exports.folders = function (req, res, next) {

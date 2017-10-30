@@ -11,24 +11,19 @@ var s3 = new AWS.S3({
 });
 
 exports.getUploadURL = function (req, res, callback) {
-    var keyByDate = moment().format('MM-DD-h:mm') + '.jpg';
+    var keyByDate = new Date().getTime() + '_'+req.body.fileName+ '.' + req.body.fileExt;
     var options = {
         Bucket: config.bucketName,
         Key: keyByDate,
         Expires: 600, //600 sec
         ContentType: 'multipart/form-data',
         ACL: 'public-read'
-    }
-    s3.getSignedUrl('putObject', options, function (err, url) {
-        s3.getSignedUrl('putObject', options, function (err, url) {
-            if (err) {
-                return callback(err);
-            }
-            callback(url);
-        })
-
+    };
+    s3.getSignedUrl('putObject', options, function(err, url){
+        if (err) return callback(err);
+        callback(null, {url: url});
     })
-}
+};
 exports.folders = function (callback) {
     var folders = [];
     s3.listBuckets(function (err, data) {
@@ -42,7 +37,7 @@ exports.folders = function (callback) {
                 return ({
                     folders: folders
                 });
-            })
+            });
             callback(folders);
         }
     });
