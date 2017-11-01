@@ -1,4 +1,3 @@
-var express = require("express");
 var error = require('../../lib/error').error;
 var provider = require('./providers/');
 

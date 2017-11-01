@@ -26,7 +26,7 @@ exports.getUploadURL = function (req, res, callback) {
             if (err) {
                 return callback(err);
             }
-            callback(null, url);
+            callback(null, {url: url});
         });
 };
 exports.folders = function (callback) {

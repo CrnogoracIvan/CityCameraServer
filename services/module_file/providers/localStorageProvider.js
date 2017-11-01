@@ -113,3 +113,7 @@ exports.deleteFile = function (req, res, callback) {
     });
 
 };
+
+exports.getUploadURL = function (req, res, callback) {
+  callback(config.serverURL+'/file/upload');
+};
