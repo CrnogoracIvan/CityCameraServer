@@ -12,7 +12,7 @@ var storage = multer.diskStorage({
             } else {
                 fs.mkdir(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (err) {
                     if (err) {
-                       return err
+                        return err;
                     } else {
                         callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
                     }
@@ -21,7 +21,7 @@ var storage = multer.diskStorage({
         });
     },
     filename: function (req, file, callback) {
-        callback(null, file.originalname)
+        callback(null, file.originalname);
     }
 
 });
@@ -34,10 +34,9 @@ var upload = multer({
 exports.upload = function (req, res, callback) {
     upload(req, res, function (err) {
         if (err) {
-            console.log('errr', err)
             return err;
         }
-        callback()
+        callback();
     });
 };
 
@@ -45,32 +44,30 @@ exports.folders = function (callback) {
     var folders = [];
     fs.readdir(config.file.destination, function (err, files) {
         if (err) {
-            return err
+            return next(err)
         }
-        //return empty list
         if (files.length === 0) {
             return ({
                 folders: folders
             });
         } else {
             files.map(function (file) {
-
-                return path.join(config.file.destination, file); 
+                return path.join(config.file.destination, file);
             }).filter(function (file) {
-
                 return fs.statSync(file).isDirectory();
             }).forEach(function (file, index, list) {
 
                 file = path.basename(file);
                 folders.push(file);
-                if (index == list.length - 1) {
+
+                if (index === list.length - 1) {
                     return ({
                         folders: folders
                     });
                 }
             });
         }
-        callback(folders);
+        callback(null,folders);
     });
 };
 
@@ -87,7 +84,7 @@ exports.files = function (req, res, next, callback) {
             path: "file/" + req.params.folder + "/file"
         };
         if (filenames.length == 0) {
-            callback(filesData);
+            callback(null,filesData);
         }
         filenames.forEach(function (file, index, list) {
 
@@ -100,10 +97,10 @@ exports.files = function (req, res, next, callback) {
                     content: content
                 });
                 if (files.length - 1 === list.length - 1) {
-                    callback(filesData)
+                    callback(null,filesData);
                 }
             });
-        })
+        });
     });
 };
 

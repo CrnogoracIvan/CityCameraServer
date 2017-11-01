@@ -11,43 +11,55 @@ var s3 = new AWS.S3({
 });
 
 exports.getUploadURL = function (req, res, callback) {
-    var keyByDate = moment().format('MM-DD-h:mm') + '.jpg';
+    var folder = moment().format('YYYY-MM-DD') + '/';
+    var fileName = req.body.file;
+    var fileExt = req.body.ext;
+    //console.log(fileName, fileExt,req.body)
     var options = {
         Bucket: config.bucketName,
-        Key: keyByDate,
+        Key: folder + fileName + '.' + fileExt,
         Expires: 600, //600 sec
         ContentType: 'multipart/form-data',
         ACL: 'public-read'
-    }
+    };
     s3.getSignedUrl('putObject', options, function (err, url) {
-        s3.getSignedUrl('putObject', options, function (err, url) {
             if (err) {
                 return callback(err);
             }
-            callback(url);
-        })
-
-    })
-}
+            callback(null, url);
+        });
+};
 exports.folders = function (callback) {
+    var params = {
+        Bucket: config.bucketName
+    };
     var folders = [];
-    s3.listBuckets(function (err, data) {
+    s3.listObjects(params, function (err, data) {
         if (err) {
-            return err
+            return err;
         } else {
-            data.Buckets.forEach(function (file) {
-                if (file.Name == config.bucketName) {
-                    folders.push(file.Name)
+            var bucketContents = data.Contents;
+
+            bucketContents.forEach(function (file, index) {
+
+                var test = bucketContents[index].Key;
+                var key = test.substring(0, test.indexOf('/'));
+
+                if (key !== "" && folders.indexOf(key) === -1) {
+                    folders.push(key);
                 }
+
                 return ({
                     folders: folders
                 });
             })
-            callback(folders);
+            callback(null, folders);
         }
     });
+
 };
 exports.files = function (req, res, next, callback) {
+
     var params = {
         Bucket: config.bucketName
     };
@@ -61,18 +73,22 @@ exports.files = function (req, res, next, callback) {
             return err;
         } else {
             var bucketContents = data.Contents;
+
             bucketContents.forEach(function (file, index) {
+
                 var urlParams = {
                     Bucket: config.bucketName,
                     Key: bucketContents[index].Key
                 };
                 s3.getSignedUrl('getObject', urlParams, function (err, url) {
+
                     files.push({
                         filename: bucketContents[index].Key,
                         content: url
                     });
+
                     if (bucketContents.length - 1 === index) {
-                        callback(filesData);
+                        callback(null, filesData);
                     }
                 });
             })
@@ -86,7 +102,7 @@ exports.deleteFile = function (req, res, callback) {
     };
     s3.deleteObject(urlParams, function (err, data) {
         if (err) {
-            return err
+            return err;
         } else {
             callback();
         }

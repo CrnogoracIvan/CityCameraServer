@@ -22,28 +22,42 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * @param folder - folder name
    */
   $scope.listFolder = function (folder) {
-
-    $scope.selected = 0;
-
-    $scope.select = function (index) {
-      $scope.selected = index;
-    };
-
-    $scope.folder = folder;
-    CityCamService.listFolder(folder)
-      .then(function (data) {
-        $scope.btnIsActive = !$scope.btnIsActive;
-        if (data.data.path != null) {
-          $scope.localImg = true;
-          $scope.s3Img = false;
-        }
-        $scope.path = data.data.path;
-        $scope.files = data.data.files;
-      }, function (err) {
-        return err;
-      });
-
-  };
+    
+        $scope.selected = 0;
+    
+        $scope.select = function (index) {
+          $scope.selected = index;
+        };
+    
+        $scope.folder = folder;
+        CityCamService.listFolder(folder)
+          .then(function (data) {
+            $scope.btnIsActive = !$scope.btnIsActive;
+            if (data.data.path !== null) {
+              $scope.localImg = true;
+              $scope.s3Img = false;
+            }
+            if (data.data.path === null) {
+              var s3Files = data.data.files.reduce(function (agg, current) {
+    
+                var currentFile = current.filename.substring(0, folder.length);
+                
+                if (currentFile === folder) {
+                  agg.push(current);
+                }
+                return agg;
+              }, []);
+              $scope.files = s3Files;
+            } else {
+              $scope.path = data.data.path;
+              $scope.files = data.data.files;
+            }
+          }, function (err) {
+            return err;
+          });
+    
+      };
+    
 
   /**
    * Invoke City Camera delete file API
@@ -84,5 +98,5 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
     $scope.viewType = type;
   };
 
-  
+
 });
