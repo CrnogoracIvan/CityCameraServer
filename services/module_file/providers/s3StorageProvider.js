@@ -1,0 +1,110 @@
+var express = require('express');
+var AWS = require('aws-sdk');
+var fs = require("fs");
+var path = require("path");
+var moment = require("moment");
+
+AWS.config.loadFromPath(config.awsCredentials.destination);
+
+var s3 = new AWS.S3({
+    signatureVersion: "v4"
+});
+
+exports.getUploadURL = function (req, res, callback) {
+    var folder = moment().format('YYYY-MM-DD') + '/';
+    var fileName = req.body.file;
+    var fileExt = req.body.ext;
+    //console.log(fileName, fileExt,req.body)
+    var options = {
+        Bucket: config.bucketName,
+        Key: folder + fileName + '.' + fileExt,
+        Expires: 600, //600 sec
+        ContentType: 'multipart/form-data',
+        ACL: 'public-read'
+    };
+    s3.getSignedUrl('putObject', options, function (err, url) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, {url: url});
+        });
+};
+exports.folders = function (callback) {
+    var params = {
+        Bucket: config.bucketName
+    };
+    var folders = [];
+    s3.listObjects(params, function (err, data) {
+        if (err) {
+            return err;
+        } else {
+            var bucketContents = data.Contents;
+
+            bucketContents.forEach(function (file, index) {
+
+                var test = bucketContents[index].Key;
+                var key = test.substring(0, test.indexOf('/'));
+
+                if (key !== "" && folders.indexOf(key) === -1) {
+                    folders.push(key);
+                }
+
+                return ({
+                    folders: folders
+                });
+            })
+            callback(null, folders);
+        }
+    });
+
+};
+exports.files = function (req, res, next, callback) {
+
+    var params = {
+        Bucket: config.bucketName
+    };
+    var files = [];
+    s3.listObjects(params, function (err, data) {
+        var filesData = {
+            files: files,
+            path: null
+        };
+        if (err) {
+            return err;
+        } else {
+            var bucketContents = data.Contents;
+
+            bucketContents.forEach(function (file, index) {
+
+                var urlParams = {
+                    Bucket: config.bucketName,
+                    Key: bucketContents[index].Key
+                };
+                s3.getSignedUrl('getObject', urlParams, function (err, url) {
+
+                    files.push({
+                        filename: bucketContents[index].Key,
+                        content: url
+                    });
+
+                    if (bucketContents.length - 1 === index) {
+                        callback(null, filesData);
+                    }
+                });
+            })
+        }
+    });
+};
+exports.deleteFile = function (req, res, callback) {
+    var urlParams = {
+        Bucket: config.bucketName,
+        Key: req.body.file
+    };
+    s3.deleteObject(urlParams, function (err, data) {
+        if (err) {
+            return err;
+        } else {
+            callback();
+        }
+    });
+};

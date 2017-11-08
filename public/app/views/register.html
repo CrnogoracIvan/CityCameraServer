@@ -3,36 +3,29 @@ Inspired by http://dribbble.com/shots/917819-iPad-Calendar-Login?list=shots&sort
 -->
 <div class="login-page">
   <div class="row">
-    <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4">
-      <img src="resources/images/flat-avatar.png" class="user-avatar"/>
-      <h1>CityCam
-        <small>Register User</small>
-      </h1>
+    <div class="form-box col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+      <img src="resources/images/avatar.png" class="user-avatar" />
+      <h1>CityCam </h1>
+      <h4>Register User</h4>
       <form role="form" name="registerForm" ng-submit="register()">
         <div class="form-content">
           <div class="form-group">
-            <input type="text" ng-model="user.username" autofocus=""
-                   class="form-control input-underline input-lg"
-                   placeholder="Username" ng-minlength="3" ng-maxlength="30"
-                   required>
+            <input type="text" ng-model="user.username" autofocus="" class="form-control input-underline input-lg" placeholder="Username"
+              ng-minlength="3" ng-maxlength="30" required>
           </div>
           <div class="form-group">
-            <input type="email" ng-model="user.email"
-                   class="form-control input-underline input-lg"
-                   placeholder="email" ng-minlength="4" ng-maxlength="30"
-                   required>
+            <input type="email" ng-model="user.email" class="form-control input-underline input-lg" placeholder="Email" ng-minlength="4"
+              ng-maxlength="30" required>
           </div>
           <div class="form-group">
-            <input type="password" ng-model="user.password"
-                   class="form-control input-underline input-lg"
-                   placeholder="Password" ng-minlength="4" ng-maxlength="30"
-                   required>
+            <input type="password" ng-model="user.password" class="form-control input-underline input-lg" placeholder="Password" ng-minlength="4"
+              ng-maxlength="30" required>
           </div>
         </div>
-        <button type="submit"
-                class="btn btn-white btn-outline btn-lg btn-rounded">Register
+        <button type="submit" class="btn btn-green btn-lg btn-rounded">Register
         </button>
       </form>
+      <a  class="auth-link" ui-sref="login" href="#!/login">Back to login</a>
     </div>
   </div>
 </div>

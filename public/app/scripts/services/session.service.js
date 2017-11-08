@@ -1,6 +1,7 @@
 app.service('SessionService', function($rootScope, $window, $injector) {
   var service = {
     storeSession: function(data) {
+  
       if (data.token) {
         $rootScope.token = data.token;
       }
@@ -12,8 +13,10 @@ app.service('SessionService', function($rootScope, $window, $injector) {
       $window.localStorage.token  = $rootScope.token;
       $window.localStorage.userId = $rootScope._id;
       $window.localStorage.user   = JSON.stringify($rootScope.user);
+
     },
     destroySession: function() {
+  
       var state = $injector.get('$state');
       delete $rootScope.token;
       delete $rootScope.userId;
@@ -26,6 +29,7 @@ app.service('SessionService', function($rootScope, $window, $injector) {
       if (state.current.name !== 'login') {
         state.go('login');
       }
+
     },
     updateSession: function(user) {
       //copy all properties from user
@@ -51,6 +55,7 @@ app.service('SessionService', function($rootScope, $window, $injector) {
       }
     },
     isAuthenticated: function() {
+
       if (!$rootScope.userId) {
         return this.restoreSession();
       } else {

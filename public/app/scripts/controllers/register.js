@@ -5,7 +5,7 @@ app.controller('RegisterCtrl', function($scope, CityCamService, $rootScope, $sta
         SessionService.storeSession(data);
         $state.go('login');
       }, function(err) {
-        UiService.warningDialog('Error register', 'Username/password is incorrect.');
+        UiService.warningDialog('Error register', 'User already exist or user/password lenght is short');
       });
   };
 });

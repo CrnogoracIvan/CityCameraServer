@@ -1,53 +1,46 @@
-<div class="folder col-lg-2">
-  <table class="table table-hover">
-    <thead>
-    <tr>
-      <th colspan="2">Naziv foldera</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="folder in folders">
-      <td class="md-col-5" colspan="5">
-        <button type="button" class="btn btn-link"
-                ng-click="listFolder(folder)">
-          {{folder}}
-        </button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<h1 class="dash-title">List files and folders</h1>
+<div class="folders-container col-lg-2">
+  <p class="tb-title"><b>List folders</b> </p>
+  <div class="folder-table">
+    <ul>
+      <li ng-repeat="folder in folders" ng-click="select($index)" ng-class="{sel: $index == selected}">
+        <div class="md-col-5">
+          <a type="button" class="btn btn-link" ng-click="listFolder(folder)">
+          <span class="glyphicon glyphicon-folder-close"></span>{{folder}}
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
 </div>
-<div class="col-lg-10">
+<div class="col-lg-10 tabs-conteiner">
   <ul class="nav nav-tabs">
     <li class="active">
-      <a ng-click="toggleView('list')" type="button"
-      data-toggle="tab">List
+      <a ng-click="toggleView('list')" type="button" data-toggle="tab">List
       </a>
     </li>
-    <li><a ng-click="toggleView('grid')" type="button"
-           data-toggle="tab">Grid</a>
+    <li><a ng-click="toggleView('grid')" type="button" data-toggle="tab">Grid</a>
     </li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane" id="list" ng-class="(viewType=='list')? 'active':''">
-      <div class="col-md-2 column">
-        <table class="table table-striped">
-          <thead>
-          <th>Filename</th>
-          </thead>
+      <div class=" column">
+        <p class="tb-title"><b>List files</b> </p>
+        <table class="table-striped">
           <tbody>
-          <tr ng-repeat="file in files">
-            <td>{{file.filename}}</td>
-          </tr>
+            <tr ng-repeat="file in files">
+              <td><span class="glyphicon glyphicon-file"></span> {{ file.filename }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
-
     <div class="tab-pane" id="grid" ng-class="(viewType=='grid')? 'active':''">
       <div class="column">
+        <p class="tb-title"><b>List images</b> </p>
         <div class="file-box" ng-repeat="file in files">
-          <img ng-src="data:image/png;base64,{{file.content}}"/>
+          <img ng-src="data:image/png;base64,{{file.content}}" ng-if="localImg" />
+          <img ng-src="{{file.content}}" ng-if="s3Img" />
           <div class="info-box">
             <span>{{file.filename}}</span>
             <button class="delete-button" ng-click="deleteFile(file)">

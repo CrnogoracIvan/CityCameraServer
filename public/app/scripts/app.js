@@ -10,6 +10,7 @@ var app = angular.module('citycamera', [
 
     $urlRouterProvider.otherwise(function($injector) {
       var $state = $injector.get('$state');
+
       $state.go('login');
     });
 
@@ -35,20 +36,6 @@ var app = angular.module('citycamera', [
         templateUrl: '/partials/register.html',
         controller: 'RegisterCtrl'
       })
-      .state('upload', {
-        url: '/upload',
-        isPublic: true,
-        parent: 'base',
-        templateUrl: '/partials/upload.html',
-        controller: 'UploadCtrl'
-      })
-      .state('showFile', {
-        url: '/showFile',
-        isPublic: true,
-        parent: 'folder',
-        templateUrl: '/partials/showDile.html',
-        controller: 'FolderCtrl'
-      })
       .state('dashboard', {
         url: '/dashboard',
         isPublic: false,
@@ -61,10 +48,4 @@ var app = angular.module('citycamera', [
         templateUrl: '/partials/folder.html',
         controller: 'FolderCtrl'
       })
-      .state('todo', {
-        url: '/todo',
-        parent: 'dashboard',
-        templateUrl: '/partials/todo.html',
-        controller: 'TodoCtrl'
-      });
   });

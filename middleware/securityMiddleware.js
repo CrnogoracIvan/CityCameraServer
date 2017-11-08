@@ -1,10 +1,10 @@
 var securityHandler = require('../lib/security/securityHandler');
 
 var Auth = {
-  checkToken: function(req, res, next) {
+  checkToken: function (req, res, next) {
     // check header or url parameters or post parameters for token
     var recToken = req.headers['authorization'] || req.headers['Authorization'];
-    securityHandler.checkToken(recToken, function(err) {
+    securityHandler.checkToken(recToken, function (err) {
       if (err) {
         res.status(err.code);
         res.send(err.message);

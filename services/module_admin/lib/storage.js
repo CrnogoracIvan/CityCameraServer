@@ -1,4 +1,5 @@
 var Users = require('./users');
+var error = require('../../../lib/error').error;
 
 /**
  * Store user to db
