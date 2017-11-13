@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var korisnici = new Schema({
+var moderator = new Schema({
   username: {
     type: String,
     unique: true,
@@ -17,5 +17,5 @@ var korisnici = new Schema({
   }
 });
 
-var Users = mongoose.model('Users', korisnici);
-module.exports = Users;
+var Admin = mongoose.model('Admin', moderator);
+module.exports = Admin;

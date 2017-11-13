@@ -63,10 +63,12 @@ router.post('/upload', controller.upload);
  }
  *
  */
-router.post('/getUploadURL', controller.getUploadURL);
+router.post('/:userId/getUploadURL', controller.getUploadURL);
 
-router.get('/folders', secMidd.checkToken, controller.folders);
-router.get('/:folder/files/', secMidd.checkToken, controller.files);
-router.delete('/delete', secMidd.checkToken, controller.deleteFile);
+router.get('/folders', secMidd.checkTokenUser, controller.folders);
+router.get('/folders/:id', secMidd.checkTokenUser, controller.foldersByUserId);
+router.get('/:folder/files/', secMidd.checkTokenUser, controller.files);
+router.get('/:id/:folder/files/', secMidd.checkTokenUser, controller.filesByUserId);
+router.delete('/delete', checkTokenUser, controller.deleteFile);
 
 module.exports = router;

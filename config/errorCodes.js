@@ -26,5 +26,9 @@ module.exports.codes = {
   'EXPIRED': {
     code: '401',
     message: 'This token has expired. Renew it'
+  },
+    'WRONG_CREDENTIALS': {
+    code: '401',
+    message: 'Wrong username or password'
   }
 };

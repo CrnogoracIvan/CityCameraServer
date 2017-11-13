@@ -10,54 +10,64 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
   $scope.s3Img = true;
   $scope.btnIsActive = false;
 
+  //list all folder - admin can see
   CityCamService.folder($scope.user)
     .then(function (result, status, headers) {
-      $scope.folders = result.data.folders;
+      if ($scope.user.isAdmin) {
+        $scope.folders = result.data.folders;
+      }
     }, function (err) {
       UiService.warningDialog('Error register');
     });
 
+  //List folders by userId
+  CityCamService.folderByUserId($scope.user._id)
+    .then(function (data, status, headers) {
+        if (!$scope.user.isAdmin) {
+          $scope.folders = data.data.folders;
+        }
+      },
+      function (err) {
+        UiService.warningDialog('Error create', 'Forbiden access');
+      });
   /**
    * Invoke City Camera to list files from specific folder
    * @param folder - folder name
    */
-  $scope.listFolder = function (folder) {
-    
-        $scope.selected = 0;
-    
-        $scope.select = function (index) {
-          $scope.selected = index;
-        };
-    
-        $scope.folder = folder;
-        CityCamService.listFolder(folder)
-          .then(function (data) {
-            $scope.btnIsActive = !$scope.btnIsActive;
-            if (data.data.path !== null) {
-              $scope.localImg = true;
-              $scope.s3Img = false;
-            }
-            if (data.data.path === null) {
-              var s3Files = data.data.files.reduce(function (agg, current) {
-    
-                var currentFile = current.filename.substring(0, folder.length);
-                
-                if (currentFile === folder) {
-                  agg.push(current);
-                }
-                return agg;
-              }, []);
-              $scope.files = s3Files;
-            } else {
+  $scope.listFiles = function (folder) {
+
+    $scope.selected = 0;
+
+    $scope.select = function (index) {
+      $scope.selected = index;
+    };
+
+    $scope.folder = folder;
+
+    //List files by Id
+    CityCamService.listFiles(folder)
+      .then(function (data) {
+        
+        $scope.btnIsActive = !$scope.btnIsActive;
+
+        if (!$scope.user.isAdmin) {
+          CityCamService.listFilesById(folder)
+            .then(function (data) {
               $scope.path = data.data.path;
               $scope.files = data.data.files;
-            }
-          }, function (err) {
-            return err;
-          });
-    
-      };
-    
+              console.log('data list files', $scope.files)
+            }, function (err) {
+              return err;
+            })
+        }
+        $scope.path = data.data.path;
+        $scope.files = data.data.files;
+      }, function (err) {
+        return err;
+      });
+
+  };
+
 
   /**
    * Invoke City Camera delete file API

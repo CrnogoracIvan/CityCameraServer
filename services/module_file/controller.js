@@ -12,7 +12,8 @@ exports.upload = function (req, res, next) {
   });
 };
 exports.getUploadURL = function (req, res, next) {
-  provider.getUploadURL(req, res, function (err,url) {
+  provider.getUploadURL(req, res, function (err, url) {
+    console.log('url', url)
     if (err) {
       return err;
     }
@@ -20,8 +21,22 @@ exports.getUploadURL = function (req, res, next) {
     res.json(url);
   });
 };
+
 exports.folders = function (req, res, next) {
-  provider.folders(function (err,folders) {
+  provider.folders(function (err, folders) {
+    console.log('>>>lista svih folders/', folders)
+    if (err) {
+      return err;
+    }
+    res.status(200);
+    res.json({
+      folders: folders
+    });
+  });
+};
+exports.foldersByUserId = function (req, res, next) {
+  provider.foldersByUserId(req,res,function (err, folders) {
+    console.log('>>>folders/:id', folders)
     if (err) {
       return err;
     }
@@ -32,7 +47,8 @@ exports.folders = function (req, res, next) {
   });
 };
 exports.files = function (req, res, next) {
-  provider.files(req, res, next, function (err,files) {
+  provider.files(req, res, next, function (err, files) {
+   console.log('files',files)
     if (err) {
       return err;
     }
@@ -40,7 +56,16 @@ exports.files = function (req, res, next) {
     res.json(files);
   });
 };
-
+exports.filesByUserId  = function (req, res, next) {
+  provider.filesByUserId (req, res, next, function (err, files) {
+   console.log('files',files)
+    if (err) {
+      return err;
+    }
+    res.status(200);
+    res.json(files);
+  });
+};
 exports.deleteFile = function (req, res, next) {
   provider.deleteFile(req, res, function () {
     res.status(200);

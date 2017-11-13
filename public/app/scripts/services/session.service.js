@@ -1,22 +1,23 @@
-app.service('SessionService', function($rootScope, $window, $injector) {
+app.service('SessionService', function ($rootScope, $window, $injector) {
   var service = {
-    storeSession: function(data) {
-  
+    storeSession: function (data) {
+
       if (data.token) {
         $rootScope.token = data.token;
       }
 
-      if (data) {
-        $rootScope.user = data;
+      if (data.user) {
+        $rootScope.user = data.user;
+        $rootScope.userId = data.user._id;
       }
 
-      $window.localStorage.token  = $rootScope.token;
-      $window.localStorage.userId = $rootScope._id;
-      $window.localStorage.user   = JSON.stringify($rootScope.user);
+      $window.localStorage.token = $rootScope.token;
+      $window.localStorage.userId = $rootScope.userId;
+      $window.localStorage.user = JSON.stringify($rootScope.user);
 
     },
-    destroySession: function() {
-  
+    destroySession: function () {
+
       var state = $injector.get('$state');
       delete $rootScope.token;
       delete $rootScope.userId;
@@ -31,30 +32,29 @@ app.service('SessionService', function($rootScope, $window, $injector) {
       }
 
     },
-    updateSession: function(user) {
+    updateSession: function (user) {
       //copy all properties from user
       // angular.forEach(user, function (val, key) {
       //   $rootScope.user[key] = val;
       // });
-      var currentUser             = $rootScope.user.currentUser;
-      $rootScope.user             = user;
+      var currentUser = $rootScope.user.currentUser;
+      $rootScope.user = user;
       $rootScope.user.currentUser = currentUser;
     },
-    updateUserSession: function(user) {
+    updateUserSession: function (user) {
       $window.localStorage.user = JSON.stringify(user);
     },
-    restoreSession: function() {
+    restoreSession: function () {
       if ($window.localStorage.token) {
-        $rootScope.token  = $window.localStorage.token;
+        $rootScope.token = $window.localStorage.token;
         $rootScope.userId = $window.localStorage.userId;
-        $rootScope.user   = JSON.parse($window.localStorage.user);
-
+        $rootScope.user = JSON.parse($window.localStorage.user);
         return true;
       } else {
         return false;
       }
     },
-    isAuthenticated: function() {
+    isAuthenticated: function () {
 
       if (!$rootScope.userId) {
         return this.restoreSession();

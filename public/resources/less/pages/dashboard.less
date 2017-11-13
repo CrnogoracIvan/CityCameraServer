@@ -177,7 +177,7 @@ table.table-striped > tbody > tr:nth-of-type(odd) {
   /*
    * Sidebar
    */
- 
+
  .sidebar{
     .user-avatar {
       margin: 10px 0 10px 0;
@@ -257,34 +257,72 @@ a .glyphicon {
 }
   .nav-tabs {
     border-bottom: 8px solid #4cd44f;
-  
+
 }
   .nav-tabs > li {
     float: left;
     margin-bottom: 0;
     width: 100px;
-  
+
 }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
      color: white;
     background-color: #4bd44f;
     border-bottom-color: transparent;
     cursor: default;
-    border: none; 
+    border: none;
 }
 .nav-tabs > li > a {
   color: #4bd44f;
   background-color: #ffffff;
   margin-right: 4px;
   line-height: 1.42857143;
-  border: none; 
+  border: none;
   border-radius:none;
 }
 
 .nav-tabs > li > a:hover {
       background-color: rgb(226, 226, 226);
       }
+.list-people ul {
+    list-style: none;
 
+    background: #b6b6b6;
+	padding: 30px;
+}
+.list-people ul li{
+    margin-bottom: 5px;
+
+}
+.list-people h4{
+	margin: 0;
+    font-size: 16px;
+    display: flex;
+    flex-wrap: wrap;
+	
+}
+.list-people h4 span:first-child{
+	width: 10%;
+}
+.list-people h4 span:last-child{
+	width: 20%;
+	text-align: center;
+}
+.list-people input{
+	margin: 0;
+}
+.list-people ul span{
+    min-height: 35px;
+    width: 34%;
+    height: 100%;
+    border: 2px solid #b6b6b6;
+    color: #e5e5e5;
+    background: #3c3a3a;
+    padding: 5px;
+    word-break: initial;
+    display: inline-block;
+    box-sizing: border-box;
+}
   @media (min-width: 768px) {
     .sidebar {
       position: fixed;
@@ -310,7 +348,7 @@ a .glyphicon {
       margin-bottom: 50px;
     }
   }
-  @media only screen and (min-width : 1200px) { 
+  @media only screen and (min-width : 1200px) {
     .tabs-conteiner {
       background: rgba(245, 245, 245, 0.2);
       min-height: 550px;

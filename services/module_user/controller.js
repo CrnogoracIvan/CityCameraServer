@@ -1,14 +1,9 @@
-var storage = require('./lib/storage');
+var storage = require('../../lib/db/model/users');
 var jwt = require('jsonwebtoken');
 var error = require('../../lib/error').error;
-/**
- * Register new admin
- * @param req
- * @param res
- * @param callback
- */
+
 exports.register = function (req, res, callback) {
-  storage.getAdmin(req.body.username, function (err, data) {
+  storage.getUser(req.body.username, function (err, data) {
     if (err) {
       return callback(error('INTERNAL_ERROR'));
     }
@@ -24,43 +19,39 @@ exports.register = function (req, res, callback) {
     if (req.body.password == '') {
       return callback(error('LENGTH_REQUIRED'));
     }
-    storage.saveAdmin(req.body.username, req.body, function (err) {
+    storage.saveUser(req.body.username, req.body, function (err) {
       if (err) {
-        return callback(error('INTERNAL_ERROR'));
+        return err;
       }
-      callback();
+      res.status(200);
+      res.json({
+        isSucces: true
+      });
     });
   });
 };
 
-/**
- * Authenticate already registered Admin
- * @param req
- * @param res
- * @param callback
- */
+
 exports.login = function (req, res, callback) {
-  storage.getAdmin(req.body.username, function (err, data) {
+  storage.getUser(req.body.username, function (err, data) {
     if (!data) {
       return callback(error('NOT_FOUND'));
     }
     data = data.toJSON();
     if (err) {
-      return callback(error('INTERNAL_ERROR'));
+      return callback(error('WRONG_CREDENTIALS'));
     }
-
     if (data.password == req.body.password) {
       _generateToken(data, function (token) {
         data.token = token;
         console.log("login data + token: ", data)
-        return callback(null, data);
-
+        res.status(200);
+        res.json({token: token, user:data});
       });
     } else {
-      callback(error('INTERNAL_ERROR'));
+      return callback(error('WRONG_CREDENTIALS'));
     }
   });
-
 };
 
 /**
@@ -70,8 +61,34 @@ exports.login = function (req, res, callback) {
  * @private
  */
 var _generateToken = function (data, callback) {
-  var token = jwt.sign(data.username, config.security.secret, {
+  var token = jwt.sign({
+    username: data.username,
+    id: data._id
+  }, config.security.secret, {
     expiresIn: '24h' // expires in 24 hours
   });
   callback(token);
 };
+
+
+exports.listAllUsers = function (req, res, next) {
+  storage.findAll(function (err, data) {
+    if (err) {
+      return next(err);
+    }
+    res.status(200);
+    res.json(data);
+  });
+};
+
+exports.updateUser = function (req, res, callback) {
+  storage.findUpdateUser(req.params.user_id, req.body, function (err, user) {
+    if (err) {
+      return err;
+    }
+    res.status(200);
+    res.json(user);
+  })
+}
+
+

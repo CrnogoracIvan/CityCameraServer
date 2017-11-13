@@ -5,7 +5,7 @@
     <ul>
       <li ng-repeat="folder in folders" ng-click="select($index)" ng-class="{sel: $index == selected}">
         <div class="md-col-5">
-          <a type="button" class="btn btn-link" ng-click="listFolder(folder)">
+          <a type="button" class="btn btn-link" ng-click="listFiles(folder)">
           <span class="glyphicon glyphicon-folder-close"></span>{{folder}}
           </a>
         </div>
@@ -29,7 +29,7 @@
         <table class="table-striped">
           <tbody>
             <tr ng-repeat="file in files">
-              <td><span class="glyphicon glyphicon-file"></span> {{ file.filename }}</td>
+              <td><span class="glyphicon glyphicon-file"></span> {{file.filename}}</td>
             </tr>
           </tbody>
         </table>
@@ -43,7 +43,7 @@
           <img ng-src="{{file.content}}" ng-if="s3Img" />
           <div class="info-box">
             <span>{{file.filename}}</span>
-            <button class="delete-button" ng-click="deleteFile(file)">
+            <button ng-if="user.isAdmin" class="delete-button" ng-click="deleteFile(file)">
               Delete
             </button>
           </div>
