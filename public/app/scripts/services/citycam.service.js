@@ -33,24 +33,22 @@ app.service('CityCamService', function ($http, $rootScope) {
         url: '/file/folders/' + $rootScope.userId
       });
     },
-    deleteFile: function (filename) {
+    deleteFile: function (filename,id) {
       return $http({
         method: 'DELETE',
-        url: '/file/delete',
+        url: '/file/delete/'+ id,
         data: {
           file: filename
         }
       });
     },
     listFiles: function (folder) {
-      console.log('list files http', folder)
       return $http({
         method: 'GET',
         url: '/file/' + folder + '/files'
       });
     },
     listFilesById: function (folder) {
-      console.log('listfilesBy ID http', folder)
       return $http({
         method: 'GET',
         url: '/file/' + $rootScope.userId +'/'+ folder +'/files'

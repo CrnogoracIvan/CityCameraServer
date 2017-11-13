@@ -67,7 +67,11 @@ exports.filesByUserId  = function (req, res, next) {
   });
 };
 exports.deleteFile = function (req, res, next) {
-  provider.deleteFile(req, res, function () {
+  provider.deleteFile(req, res, function (err) {
+    console.log('err>>>>>',err)
+       if (err) {
+      return err;
+    }
     res.status(200);
     res.json({
       isSuccess: true

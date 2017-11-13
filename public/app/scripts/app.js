@@ -58,18 +58,5 @@ var app = angular.module('citycamera', [
         templateUrl: '/partials/folder.html',
         controller: 'FolderCtrl'
       })
-      .state('folderByUser', {
-        url: '/folders/:id',
-        isPublic: false,
-        parent: 'dashboard',
-        templateUrl: '/partials/folder.html',
-        controller: 'FolderCtrl'
-      })
-      .state('FilesByUser', {
-        url: '/folders/:id/:folder',
-        isPublic: false,
-        parent: 'dashboard',
-        templateUrl: '/partials/folder.html',
-        controller: 'FolderCtrl'
-      })
+
   });

@@ -43,7 +43,7 @@
           <img ng-src="{{file.content}}" ng-if="s3Img" />
           <div class="info-box">
             <span>{{file.filename}}</span>
-            <button ng-if="user.isAdmin" class="delete-button" ng-click="deleteFile(file)">
+            <button class="delete-button" ng-click="deleteFile(file)">
               Delete
             </button>
           </div>

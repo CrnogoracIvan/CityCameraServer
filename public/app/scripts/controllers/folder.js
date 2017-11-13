@@ -47,15 +47,15 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
     //List files by Id
     CityCamService.listFiles(folder)
       .then(function (data) {
-        
+
         $scope.btnIsActive = !$scope.btnIsActive;
 
         if (!$scope.user.isAdmin) {
           CityCamService.listFilesById(folder)
             .then(function (data) {
               $scope.path = data.data.path;
-              $scope.files = data.data.files;
-              console.log('data list files', $scope.files)
+              $rootScope.files = data.data.files;
+              // console.log('data list files', $scope.files)
             }, function (err) {
               return err;
             })
@@ -74,18 +74,11 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * @param file
    */
   $scope.deleteFile = function (file) {
-    console.log('path', file.content);
-    var check = file.content
-    var deleteFile;
-    var x = "http";
-    if (check.substring(0, x.length) !== x) {
-      deleteFile = $scope.folder + '/' + file.filename
-    } else {
-      deleteFile = file.filename
-    }
+    var deleteFile = file.filename;
+    var filnameId = file._id;
     UiService.confirmDialog('Delete file', 'Are you sure you want to delete this file?', function (answer) {
       if (answer === true) {
-        CityCamService.deleteFile(deleteFile)
+        CityCamService.deleteFile(deleteFile, filnameId)
           .then(function (data, status, headers) {
             var index = $scope.files.indexOf(file);
             $scope.files.splice(index, 1);

@@ -29,7 +29,6 @@ exports.getUploadURL = function (req, res, callback) {
             };
             console.log('options', options);
             s3.getSignedUrl('putObject', options, function (err, url) {
-                console.log('url', url);
                 if (err) {
                     return callback(err);
                 }
@@ -46,10 +45,9 @@ exports.getUploadURL = function (req, res, callback) {
 
 };
 exports.folders = function (callback) {
-    console.log('lista svih foldera folder/')
     folders.returnAllFolders(function (err, data) {
         if (err) return err;
-        console.log('pronadjeno folder/', data)
+        console.log('lista svih foldersa folder/', data)
         callback(null, data);
     })
 
@@ -66,7 +64,7 @@ exports.foldersByUserId = function (req, res, callback) {
             return callback(err);
         })
     } catch (e) {
-        console.log('zajeb', e)
+        console.log('greska', e)
     };
 
 };
@@ -76,7 +74,7 @@ exports.files = function (req, res, next, callback) {
     console.log('req.params.folder s3 usao', req.params.folder)
     try {
         folders.retrunAllFiles(req.params.folder).then(function (data) {
-            console.log(' s3 usao i vratio data', data)
+            console.log(' Lista svih fajlova', data)
             callback(null, data);
 
         }).fail(function (err) {
@@ -89,10 +87,10 @@ exports.files = function (req, res, next, callback) {
 }
 exports.filesByUserId = function (req, res, next, callback) {
 
-    console.log('id and folder', req.params.folder,req.params.id)
+    console.log('id and folder', req.params.folder,req.params.id);
     try {
         folders.retrunFilesByUserId(req.params.id,req.params.folder).then(function (data) {
-            console.log(' s3 files by ID vrati', data)
+            console.log('list files by user ID ', data)
             callback(null, data);
 
         }).fail(function (err) {
@@ -104,6 +102,20 @@ exports.filesByUserId = function (req, res, next, callback) {
     };
 }
 
+exports.deleteFile = function (req, res, callback) {
+console.log('delete s3 storage', req.params.id);
+    try {
+        folders.deleteFileByUser(req.params.id).then(function (data) {
+            callback(null, data);
+
+        }).fail(function (err) {
+            console.log('greska1', err)
+            return callback(err);
+        })
+    } catch (e) {
+        console.log('greska2', e)
+    };
+};
 // exports.folders = function (callback) {
 //     var params = {
 //         Bucket: config.bucketName
@@ -171,16 +183,16 @@ exports.filesByUserId = function (req, res, next, callback) {
 //     });
 // };
 
-exports.deleteFile = function (req, res, callback) {
-    var urlParams = {
-        Bucket: config.bucketName,
-        Key: req.body.file
-    };
-    s3.deleteObject(urlParams, function (err, data) {
-        if (err) {
-            return err;
-        } else {
-            callback();
-        }
-    });
-};
+// exports.deleteFile = function (req, res, callback) {
+//     var urlParams = {
+//         Bucket: config.bucketName,
+//         Key: req.body.file
+//     };
+//     s3.deleteObject(urlParams, function (err, data) {
+//         if (err) {
+//             return err;
+//         } else {
+//             callback();
+//         }
+//     });
+// };
