@@ -18,11 +18,12 @@ exports.getUploadURL = function (req, res, callback) {
     try {
         folders.saveFile({
             userId: req.params.userId,
-            filename: fileName + '.' + fileExt
+            filename: fileName,
+            ext: fileExt
         }).then(function (saved) {
             var options = {
                 Bucket: config.bucketName,
-                Key: folder + saved._id + '.' + fileExt,
+                Key: saved._id + '.' + fileExt,
                 Expires: 600, //600 sec
                 ContentType: 'multipart/form-data',
                 ACL: 'public-read'
@@ -87,9 +88,9 @@ exports.files = function (req, res, next, callback) {
 }
 exports.filesByUserId = function (req, res, next, callback) {
 
-    console.log('id and folder', req.params.folder,req.params.id);
+    console.log('id and folder', req.params.folder, req.params.id);
     try {
-        folders.retrunFilesByUserId(req.params.id,req.params.folder).then(function (data) {
+        folders.retrunFilesByUserId(req.params.id, req.params.folder).then(function (data) {
             console.log('list files by user ID ', data)
             callback(null, data);
 
@@ -102,20 +103,45 @@ exports.filesByUserId = function (req, res, next, callback) {
     };
 }
 
-exports.deleteFile = function (req, res, callback) {
-console.log('delete s3 storage', req.params.id);
-    try {
-        folders.deleteFileByUser(req.params.id).then(function (data) {
-            callback(null, data);
+// exports.deleteFile = function (req, res, callback) {
+//     console.log('delete s3 storage', req.params.id);
+//     try {
+//         folders.deleteFileByUser(req.params.id).then(function (data) {
 
-        }).fail(function (err) {
-            console.log('greska1', err)
-            return callback(err);
-        })
-    } catch (e) {
-        console.log('greska2', e)
+//             callback(null, data);
+
+//         }).fail(function (err) {
+//             console.log('greska1', err)
+//             return callback(err);
+//         })
+//     } catch (e) {
+//         console.log('greska2', e)
+//     };
+// };
+
+
+exports.deleteFile = function (req, res, callback) {
+    console.log('S3 ======= req.body.file', req.body.file);
+    var urlParams = {
+        Bucket: config.bucketName,
+        Key: req.body.file
     };
+
+    s3.deleteObject(urlParams, function (err, data) {
+        console.log('S3 ======= URL delter', urlParams);
+        if (err) {
+            return err;
+        } else {
+            callback(
+                folders.deleteFileByUser(req.params.id).then(function (data) {
+                    callback(null, data);
+                })
+
+            );
+        }
+    });
 };
+
 // exports.folders = function (callback) {
 //     var params = {
 //         Bucket: config.bucketName
@@ -179,20 +205,6 @@ console.log('delete s3 storage', req.params.id);
 //                     }
 //                 });
 //             })
-//         }
-//     });
-// };
-
-// exports.deleteFile = function (req, res, callback) {
-//     var urlParams = {
-//         Bucket: config.bucketName,
-//         Key: req.body.file
-//     };
-//     s3.deleteObject(urlParams, function (err, data) {
-//         if (err) {
-//             return err;
-//         } else {
-//             callback();
 //         }
 //     });
 // };

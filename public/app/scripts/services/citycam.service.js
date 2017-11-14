@@ -34,6 +34,7 @@ app.service('CityCamService', function ($http, $rootScope) {
       });
     },
     deleteFile: function (filename,id) {
+      console.log('delete http',filename,id)
       return $http({
         method: 'DELETE',
         url: '/file/delete/'+ id,
@@ -51,7 +52,7 @@ app.service('CityCamService', function ($http, $rootScope) {
     listFilesById: function (folder) {
       return $http({
         method: 'GET',
-        url: '/file/' + $rootScope.userId +'/'+ folder +'/files'
+        url: '/file/' + $rootScope.userId + '/' + folder + '/files'
       });
     },
     update: function (user) {

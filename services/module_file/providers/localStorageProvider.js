@@ -44,7 +44,8 @@ exports.folders = function (callback) {
     var folders = [];
     fs.readdir(config.file.destination, function (err, files) {
         if (err) {
-            return next(err)
+            console.log('err',err)
+            return err
         }
         if (files.length === 0) {
             return ({

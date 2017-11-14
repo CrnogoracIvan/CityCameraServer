@@ -15,21 +15,23 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
     .then(function (result, status, headers) {
       if ($scope.user.isAdmin) {
         $scope.folders = result.data.folders;
+      } else {
+        //List folders by userId
+        CityCamService.folderByUserId($scope.user._id)
+          .then(function (data, status, headers) {
+              if (!$scope.user.isAdmin) {
+                $scope.folders = data.data.folders;
+              }
+            },
+            function (err) {
+              UiService.warningDialog('Error create', 'Forbiden access');
+            });
       }
     }, function (err) {
-      UiService.warningDialog('Error register');
+      UiService.warningDialog('Forbiden access');
     });
 
-  //List folders by userId
-  CityCamService.folderByUserId($scope.user._id)
-    .then(function (data, status, headers) {
-        if (!$scope.user.isAdmin) {
-          $scope.folders = data.data.folders;
-        }
-      },
-      function (err) {
-        UiService.warningDialog('Error create', 'Forbiden access');
-      });
+
   /**
    * Invoke City Camera to list files from specific folder
    * @param folder - folder name
@@ -50,7 +52,10 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
 
         $scope.btnIsActive = !$scope.btnIsActive;
 
-        if (!$scope.user.isAdmin) {
+        if ($scope.user.isAdmin) {
+          $scope.path = data.data.path;
+          $scope.files = data.data.files;
+        } else {
           CityCamService.listFilesById(folder)
             .then(function (data) {
               $scope.path = data.data.path;
@@ -60,12 +65,9 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
               return err;
             })
         }
-        $scope.path = data.data.path;
-        $scope.files = data.data.files;
       }, function (err) {
         return err;
       });
-
   };
 
 
@@ -74,11 +76,12 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * @param file
    */
   $scope.deleteFile = function (file) {
-    var deleteFile = file.filename;
-    var filnameId = file._id;
+    console.log('file', file)
+    var idDb = file._id;
+    var idS3 = file._id + '.' + file.ext;
     UiService.confirmDialog('Delete file', 'Are you sure you want to delete this file?', function (answer) {
       if (answer === true) {
-        CityCamService.deleteFile(deleteFile, filnameId)
+        CityCamService.deleteFile(idS3, idDb)
           .then(function (data, status, headers) {
             var index = $scope.files.indexOf(file);
             $scope.files.splice(index, 1);

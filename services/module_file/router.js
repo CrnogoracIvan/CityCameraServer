@@ -70,5 +70,4 @@ router.get('/folders/:id', secMidd.checkTokenUser, controller.foldersByUserId);
 router.get('/:folder/files/', secMidd.checkTokenUser, controller.files);
 router.get('/:id/:folder/files/', secMidd.checkTokenUser, controller.filesByUserId);
 router.delete('/delete/:id', secMidd.checkTokenUser, controller.deleteFile);
-
 module.exports = router;

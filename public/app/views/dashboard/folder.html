@@ -29,7 +29,7 @@
         <table class="table-striped">
           <tbody>
             <tr ng-repeat="file in files">
-              <td><span class="glyphicon glyphicon-file"></span> {{file.filename}}</td>
+              <td><span class="glyphicon glyphicon-file"></span> {{file.filename}}.{{file.ext}}</td>
             </tr>
           </tbody>
         </table>
@@ -40,9 +40,9 @@
         <p class="tb-title"><b>List images</b> </p>
         <div class="file-box" ng-repeat="file in files">
           <img ng-src="data:image/png;base64,{{file.content}}" ng-if="localImg" />
-          <img ng-src="{{file.content}}" ng-if="s3Img" />
+          <img ng-src="https://citycamera.s3.eu-central-1.amazonaws.com/{{file._id}}.{{file.ext}}" ng-if="s3Img" />
           <div class="info-box">
-            <span>{{file.filename}}</span>
+            <span>{{file.filename}}.{{file.ext}}</span>
             <button class="delete-button" ng-click="deleteFile(file)">
               Delete
             </button>
