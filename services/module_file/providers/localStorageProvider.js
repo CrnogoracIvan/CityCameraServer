@@ -3,27 +3,20 @@ var multer = require("multer"); //is midleware for handling multipart/form-data,
 var moment = require("moment"); //is js library for parsing, manipulating, validating and formating data
 var fs = require("fs");
 var path = require("path"); //This module contains utilities for handling and transforming file paths.
+var folders = require('../../../lib/db/model/folders');
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        fs.exists(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (exists) {
-            if (exists) {
-                callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
-            } else {
-                fs.mkdir(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (err) {
-                    if (err) {
-                        return err;
-                    } else {
-                        callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
-                    }
-                });
-            }
-        });
+
+        callback(null, config.file.destination + "/");
     },
     filename: function (req, file, callback) {
+        console.log('filname multer', file);
+        console.log('muler req', req.params.userId);
+        console.log('muler file.originalname>>>>>>', file.originalname);
+        file.originalname = req.params.userId + '.jpg'
         callback(null, file.originalname);
     }
-
 });
 
 var upload = multer({
@@ -39,71 +32,116 @@ exports.upload = function (req, res, callback) {
         callback();
     });
 };
+exports.getUploadURL = function (req, res, callback) {
+    var fileName = req.body.file;
+    var fileExt = req.body.ext;
+    console.log('storage', req.body.file, req.body.ext)
+    folders.saveFile({
+        userId: req.params.userId,
+        filename: fileName,
+        ext: fileExt
+    }).then(function (saved) {
+        console.log('savedddddddd', saved)
+        callback(null, config.serverURL + '/file/' + saved._id + '/upload');
+    })
 
+};
 exports.folders = function (callback) {
-    var folders = [];
-    fs.readdir(config.file.destination, function (err, files) {
-        if (err) {
-            console.log('err',err)
-            return err
-        }
-        if (files.length === 0) {
-            return ({
-                folders: folders
-            });
-        } else {
-            files.map(function (file) {
-                return path.join(config.file.destination, file);
-            }).filter(function (file) {
-                return fs.statSync(file).isDirectory();
-            }).forEach(function (file, index, list) {
+    folders.returnAllFolders(function (err, data) {
+        if (err) return err;
+        //   console.log('lista svih foldersa folder locall/', data)
+        callback(null, data);
+    })
 
-                file = path.basename(file);
-                folders.push(file);
-
-                if (index === list.length - 1) {
-                    return ({
-                        folders: folders
-                    });
-                }
-            });
-        }
-        callback(null,folders);
-    });
 };
+exports.foldersByUserId = function (req, res, callback) {
+    console.log('req.params.id', req.params.id)
+    try {
+        folders.retrunFoldersByUserId(req.params.id).then(function (data) {
 
+            callback(null, data);
+
+        }).fail(function (err) {
+
+            return callback(err);
+        })
+    } catch (e) {
+        console.log('greska', e)
+    };
+
+};
 exports.files = function (req, res, next, callback) {
+    console.log('req.params.folder s3 usao', req.params.folder)
+    folders.retrunAllFiles(req.params.folder).then(function (data) {
 
-    var files = [];
-    fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
+        var test = data.files;
 
-        if (err) {
-            return next(err);
-        }
-        var filesData = {
-            files: files,
-            path: "file/" + req.params.folder + "/file"
-        };
-        if (filenames.length == 0) {
-            callback(null,filesData);
-        }
-        filenames.forEach(function (file, index, list) {
+        console.log(' test var', data);
+        var listAllFiles = [];
+        test.forEach(function (fileLoc, index, list) {
+            //  console.log(' >>>>>', fileLoc);
 
-            fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
-                if (err) {
-                    return next(err);
+            fs.readFile(config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext, "base64", function (err, content) {
+                //   console.log(' >>>>>22', config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext)
+                var filesData = {
+                    files: listAllFiles,
+                    path: "file/" + fileLoc._id + '.' + fileLoc.ext + "/file"
+                };
+                listAllFiles.push({
+                    content: content,
+                    filename: fileLoc.filename + '.' + fileLoc.ext
+                })
+
+                if (listAllFiles.length - 1 === list.length - 1) {
+
+                    callback(null, filesData)
                 }
-                files.push({
-                    filename: file,
-                    content: content
-                });
-                if (files.length - 1 === list.length - 1) {
-                    callback(null,filesData);
-                }
+
             });
-        });
-    });
+
+
+        })
+
+    })
 };
+exports.filesByUserId = function (req, res, next, callback) {
+    console.log('id and folder', req.params.folder, req.params.id);
+    try {
+        folders.retrunFilesByUserId(req.params.id, req.params.folder).then(function (data) {
+            console.log('list files by user ID ', data)
+            //   callback(null, data);
+
+            var test = data.files;
+
+            console.log(' test var', data);
+            var listAllFiles = [];
+            test.forEach(function (fileLoc, index, list) {
+                //  console.log(' >>>>>', fileLoc);
+
+                fs.readFile(config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext, "base64", function (err, content) {
+                    //   console.log(' >>>>>22', config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext)
+                    var filesData = {
+                        files: listAllFiles,
+                        path: "file/" + fileLoc._id + '.' + fileLoc.ext + "/file"
+                    };
+                    listAllFiles.push({
+                        content: content,
+                        filename: fileLoc.filename + '.' + fileLoc.ext
+                    })
+                    if (listAllFiles.length - 1 === list.length - 1) {
+                        callback(null, filesData)
+                    }
+                });
+            })
+
+        }).fail(function (err) {
+            console.log('greska1', err)
+            return callback(err);
+        })
+    } catch (e) {
+        console.log('greska2', e)
+    };
+}
 
 exports.deleteFile = function (req, res, callback) {
     fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
@@ -113,8 +151,4 @@ exports.deleteFile = function (req, res, callback) {
         callback();
     });
 
-};
-
-exports.getUploadURL = function (req, res, callback) {
-  callback(config.serverURL+'/file/upload');
 };

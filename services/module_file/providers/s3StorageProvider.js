@@ -11,7 +11,6 @@ var s3 = new AWS.S3({
 });
 
 exports.getUploadURL = function (req, res, callback) {
-    var folder = moment().format('YYYY-MM-DD') + '/';
     var fileName = req.body.file;
     var fileExt = req.body.ext;
 
@@ -71,19 +70,18 @@ exports.foldersByUserId = function (req, res, callback) {
 };
 
 exports.files = function (req, res, next, callback) {
-
-    console.log('req.params.folder s3 usao', req.params.folder)
+    console.log('req.params.folder s3 usao', req.params.folder);
     try {
         folders.retrunAllFiles(req.params.folder).then(function (data) {
-            console.log(' Lista svih fajlova', data)
+            console.log(' Lista svih fajlova', data);
             callback(null, data);
 
         }).fail(function (err) {
-            console.log('greska1', err)
+            console.log('greska1', err);
             return callback(err);
         })
     } catch (e) {
-        console.log('greska2', e)
+        console.log('greska2', e);
     };
 }
 exports.filesByUserId = function (req, res, next, callback) {
@@ -91,34 +89,17 @@ exports.filesByUserId = function (req, res, next, callback) {
     console.log('id and folder', req.params.folder, req.params.id);
     try {
         folders.retrunFilesByUserId(req.params.id, req.params.folder).then(function (data) {
-            console.log('list files by user ID ', data)
+            console.log('list files by user ID ', data);
             callback(null, data);
 
         }).fail(function (err) {
-            console.log('greska1', err)
+            console.log('greska1', err);
             return callback(err);
         })
     } catch (e) {
         console.log('greska2', e)
     };
 }
-
-// exports.deleteFile = function (req, res, callback) {
-//     console.log('delete s3 storage', req.params.id);
-//     try {
-//         folders.deleteFileByUser(req.params.id).then(function (data) {
-
-//             callback(null, data);
-
-//         }).fail(function (err) {
-//             console.log('greska1', err)
-//             return callback(err);
-//         })
-//     } catch (e) {
-//         console.log('greska2', e)
-//     };
-// };
-
 
 exports.deleteFile = function (req, res, callback) {
     console.log('S3 ======= req.body.file', req.body.file);

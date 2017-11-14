@@ -55,12 +55,13 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
         if ($scope.user.isAdmin) {
           $scope.path = data.data.path;
           $scope.files = data.data.files;
+           console.log('data list files admin', data)
         } else {
           CityCamService.listFilesById(folder)
             .then(function (data) {
               $scope.path = data.data.path;
-              $rootScope.files = data.data.files;
-              // console.log('data list files', $scope.files)
+              $scope.files = data.data.files;
+            console.log('data list filesuser', data)
             }, function (err) {
               return err;
             })

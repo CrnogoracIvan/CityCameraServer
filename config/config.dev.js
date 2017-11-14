@@ -7,7 +7,7 @@ var config = {
     "db": "citycamera_test"
   },
   "file": {
-    "destination": "LOCAL STORAGE FILES LOCATION"
+    "destination": "/home/jelena/exercise/HyperEther/upload"
   },
   "log": {
     "level": "debug",
@@ -21,7 +21,7 @@ var config = {
       "keepLogsDays": 5
     }
   },
-  "provider": "s3",
+  "provider": "local",
   "awsCredentials": {
     "destination": "aws.json"
   },

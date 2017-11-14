@@ -2,9 +2,10 @@ var error = require('../../lib/error').error;
 var provider = require('./providers/');
 
 exports.upload = function (req, res, next) {
-  provider.upload(req, res, function () {
+    console.log('upload ctrl');
+  provider.upload(req, res, function (err,data) {
+    console.log('ctrl',data)
     res.status(200);
-    res.json(url);
     res.json({
       isSuccess: true,
       message: 'Image uploaded!'
@@ -24,7 +25,7 @@ exports.getUploadURL = function (req, res, next) {
 
 exports.folders = function (req, res, next) {
   provider.folders(function (err, folders) {
-    console.log('>>>lista svih folders/', folders)
+   // console.log('>>>lista svih folders/', folders)
     if (err) {
       return err;
     }
@@ -36,7 +37,7 @@ exports.folders = function (req, res, next) {
 };
 exports.foldersByUserId = function (req, res, next) {
   provider.foldersByUserId(req,res,function (err, folders) {
-    console.log('>>>folders/:id', folders)
+  //  console.log('>>>folders/:id', folders)
     if (err) {
       return err;
     }
@@ -48,7 +49,7 @@ exports.foldersByUserId = function (req, res, next) {
 };
 exports.files = function (req, res, next) {
   provider.files(req, res, next, function (err, files) {
-   console.log('files',files)
+ console.log('vracenooooooooooooooooooo',files)
     if (err) {
       return err;
     }
@@ -58,7 +59,7 @@ exports.files = function (req, res, next) {
 };
 exports.filesByUserId  = function (req, res, next) {
   provider.filesByUserId (req, res, next, function (err, files) {
-   console.log('files',files)
+ //  console.log('files',files)
     if (err) {
       return err;
     }
