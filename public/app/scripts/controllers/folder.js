@@ -75,6 +75,7 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * Invoke City Camera delete file API
    * @param file
    */
+  
   $scope.deleteFile = function (file) {
     console.log('file', file)
     var idDb = file._id;
