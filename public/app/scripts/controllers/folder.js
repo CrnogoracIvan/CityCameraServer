@@ -46,22 +46,23 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
 
     $scope.folder = folder;
 
-    //List files by Id
+    //List file
     CityCamService.listFiles(folder)
       .then(function (data) {
-
         $scope.btnIsActive = !$scope.btnIsActive;
-
+        if (data.data.path !== null) {
+          $scope.localImg = true;
+          $scope.s3Img = false;
+        }
         if ($scope.user.isAdmin) {
-          $scope.path = data.data.path;
           $scope.files = data.data.files;
-           console.log('data list files admin', data)
+          console.log('data list files admin', data)
         } else {
+          //List files by Id
           CityCamService.listFilesById(folder)
             .then(function (data) {
-              $scope.path = data.data.path;
               $scope.files = data.data.files;
-            console.log('data list filesuser', data)
+              console.log('data list files user', data)
             }, function (err) {
               return err;
             })
@@ -76,14 +77,14 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
    * Invoke City Camera delete file API
    * @param file
    */
-  
+
   $scope.deleteFile = function (file) {
-    console.log('file', file)
+    console.log('file delete', file)
     var idDb = file._id;
-    var idS3 = file._id + '.' + file.ext;
+    var idLocS3 = file._id + '.' + file.ext;
     UiService.confirmDialog('Delete file', 'Are you sure you want to delete this file?', function (answer) {
       if (answer === true) {
-        CityCamService.deleteFile(idS3, idDb)
+        CityCamService.deleteFile(idLocS3, idDb)
           .then(function (data, status, headers) {
             var index = $scope.files.indexOf(file);
             $scope.files.splice(index, 1);

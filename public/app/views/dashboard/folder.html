@@ -39,8 +39,8 @@
       <div class="column">
         <p class="tb-title"><b>List images</b> </p>
         <div class="file-box" ng-repeat="file in files">
-          <img ng-src="data:image/png;base64,{{file.content}}"  />ng-if="localImg"
-          <!--<img ng-src="https://citycamera.s3.eu-central-1.amazonaws.com/{{file._id}}.{{file.ext}}" ng-if="s3Img" />-->
+          <img ng-src="data:image/png;base64,{{file.content}}" ng-if="localImg" />
+          <img ng-src="https://citycamera.s3.eu-central-1.amazonaws.com/{{file._id}}.{{file.ext}}" ng-if="s3Img" />
           <div class="info-box">
             <span>{{file.filename}}.{{file.ext}}</span>
             <button class="delete-button" ng-click="deleteFile(file)">

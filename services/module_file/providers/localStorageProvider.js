@@ -35,13 +35,12 @@ exports.upload = function (req, res, callback) {
 exports.getUploadURL = function (req, res, callback) {
     var fileName = req.body.file;
     var fileExt = req.body.ext;
-    console.log('storage', req.body.file, req.body.ext)
+
     folders.saveFile({
         userId: req.params.userId,
         filename: fileName,
         ext: fileExt
     }).then(function (saved) {
-        console.log('savedddddddd', saved)
         callback(null, config.serverURL + '/file/' + saved._id + '/upload');
     })
 
@@ -49,13 +48,11 @@ exports.getUploadURL = function (req, res, callback) {
 exports.folders = function (callback) {
     folders.returnAllFolders(function (err, data) {
         if (err) return err;
-        //   console.log('lista svih foldersa folder locall/', data)
         callback(null, data);
     })
 
 };
 exports.foldersByUserId = function (req, res, callback) {
-    console.log('req.params.id', req.params.id)
     try {
         folders.retrunFoldersByUserId(req.params.id).then(function (data) {
 
@@ -70,26 +67,28 @@ exports.foldersByUserId = function (req, res, callback) {
     };
 
 };
-exports.files = function (req, res, next, callback) {
-    console.log('req.params.folder s3 usao', req.params.folder)
+exports.files = function (req, res, callback) {
+
     folders.retrunAllFiles(req.params.folder).then(function (data) {
 
-        var test = data.files;
-
-        console.log(' test var', data);
+        var files = data.files;
         var listAllFiles = [];
-        test.forEach(function (fileLoc, index, list) {
-            //  console.log(' >>>>>', fileLoc);
 
-            fs.readFile(config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext, "base64", function (err, content) {
-                //   console.log(' >>>>>22', config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext)
+        files.forEach(function (fileName, index, list) {
+
+            fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
+               
                 var filesData = {
                     files: listAllFiles,
-                    path: "file/" + fileLoc._id + '.' + fileLoc.ext + "/file"
+                    path: "file/" + fileName._id + '.' + fileName.ext + "/file"
                 };
+
                 listAllFiles.push({
                     content: content,
-                    filename: fileLoc.filename + '.' + fileLoc.ext
+                    filename: fileName.filename,
+                    _id: fileName._id,
+                    ext: fileName.ext,
+
                 })
 
                 if (listAllFiles.length - 1 === list.length - 1) {
@@ -104,29 +103,25 @@ exports.files = function (req, res, next, callback) {
 
     })
 };
-exports.filesByUserId = function (req, res, next, callback) {
-    console.log('id and folder', req.params.folder, req.params.id);
+exports.filesByUserId = function (req, res, callback) {
     try {
         folders.retrunFilesByUserId(req.params.id, req.params.folder).then(function (data) {
-            console.log('list files by user ID ', data)
-            //   callback(null, data);
 
-            var test = data.files;
-
-            console.log(' test var', data);
+            var files = data.files;
             var listAllFiles = [];
-            test.forEach(function (fileLoc, index, list) {
-                //  console.log(' >>>>>', fileLoc);
 
-                fs.readFile(config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext, "base64", function (err, content) {
-                    //   console.log(' >>>>>22', config.file.destination + "/" + fileLoc._id + '.' + fileLoc.ext)
+            files.forEach(function (fileName, index, list) {
+
+                fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
                     var filesData = {
                         files: listAllFiles,
-                        path: "file/" + fileLoc._id + '.' + fileLoc.ext + "/file"
+                        path: "file/" + fileName._id + '.' + fileName.ext + "/file",
                     };
                     listAllFiles.push({
                         content: content,
-                        filename: fileLoc.filename + '.' + fileLoc.ext
+                        filename: fileName.filename,
+                        _id: fileName._id,
+                        ext: fileName.ext
                     })
                     if (listAllFiles.length - 1 === list.length - 1) {
                         callback(null, filesData)
@@ -135,7 +130,6 @@ exports.filesByUserId = function (req, res, next, callback) {
             })
 
         }).fail(function (err) {
-            console.log('greska1', err)
             return callback(err);
         })
     } catch (e) {
@@ -146,9 +140,14 @@ exports.filesByUserId = function (req, res, next, callback) {
 exports.deleteFile = function (req, res, callback) {
     fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
         if (err) {
-            next(err);
+            return err;
+        } else {
+            callback(
+                folders.deleteFileByUser(req.params.id).then(function (data) {
+                    callback(null, data);
+                })
+            );
         }
-        callback();
     });
 
 };

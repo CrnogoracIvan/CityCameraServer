@@ -2,9 +2,8 @@ var error = require('../../lib/error').error;
 var provider = require('./providers/');
 
 exports.upload = function (req, res, next) {
-    console.log('upload ctrl');
-  provider.upload(req, res, function (err,data) {
-    console.log('ctrl',data)
+  console.log('upload ctrl');
+  provider.upload(req, res, function (err, data) {
     res.status(200);
     res.json({
       isSuccess: true,
@@ -14,9 +13,8 @@ exports.upload = function (req, res, next) {
 };
 exports.getUploadURL = function (req, res, next) {
   provider.getUploadURL(req, res, function (err, url) {
-    console.log('url', url)
     if (err) {
-      return err;
+      return next(err);
     }
     res.status(200);
     res.json(url);
@@ -25,9 +23,8 @@ exports.getUploadURL = function (req, res, next) {
 
 exports.folders = function (req, res, next) {
   provider.folders(function (err, folders) {
-   // console.log('>>>lista svih folders/', folders)
     if (err) {
-      return err;
+      return next(err);
     }
     res.status(200);
     res.json({
@@ -36,10 +33,9 @@ exports.folders = function (req, res, next) {
   });
 };
 exports.foldersByUserId = function (req, res, next) {
-  provider.foldersByUserId(req,res,function (err, folders) {
-  //  console.log('>>>folders/:id', folders)
+  provider.foldersByUserId(req, res, function (err, folders) {
     if (err) {
-      return err;
+      return next(err);
     }
     res.status(200);
     res.json({
@@ -48,20 +44,18 @@ exports.foldersByUserId = function (req, res, next) {
   });
 };
 exports.files = function (req, res, next) {
-  provider.files(req, res, next, function (err, files) {
- console.log('vracenooooooooooooooooooo',files)
+  provider.files(req, res, function (err, files) {
     if (err) {
-      return err;
+      return next(err);
     }
     res.status(200);
     res.json(files);
   });
 };
-exports.filesByUserId  = function (req, res, next) {
-  provider.filesByUserId (req, res, next, function (err, files) {
- //  console.log('files',files)
+exports.filesByUserId = function (req, res, next) {
+  provider.filesByUserId(req, res, function (err, files) {
     if (err) {
-      return err;
+      return next(err);
     }
     res.status(200);
     res.json(files);
@@ -69,9 +63,8 @@ exports.filesByUserId  = function (req, res, next) {
 };
 exports.deleteFile = function (req, res, next) {
   provider.deleteFile(req, res, function (err) {
-    console.log('err>>>>>',err)
-       if (err) {
-      return err;
+    if (err) {
+      return next(err);
     }
     res.status(200);
     res.json({

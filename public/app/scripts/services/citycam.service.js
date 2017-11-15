@@ -33,11 +33,10 @@ app.service('CityCamService', function ($http, $rootScope) {
         url: '/file/folders/' + $rootScope.userId
       });
     },
-    deleteFile: function (filename,id) {
-      console.log('delete http',filename,id)
+    deleteFile: function (filename, id) {
       return $http({
         method: 'DELETE',
-        url: '/file/delete/'+ id,
+        url: '/file/delete/' + id,
         data: {
           file: filename
         }
