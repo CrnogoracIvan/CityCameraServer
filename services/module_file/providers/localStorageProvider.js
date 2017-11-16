@@ -1,4 +1,5 @@
 var express = require("express");
+var Q = require('q');
 var multer = require("multer"); //is midleware for handling multipart/form-data,(primarily used for uploading files)
 var moment = require("moment"); //is js library for parsing, manipulating, validating and formating data
 var fs = require("fs");
@@ -32,44 +33,49 @@ exports.upload = function (req, res, callback) {
         callback();
     });
 };
-exports.getUploadURL = function (req, res, callback) {
-    var fileName = req.body.file;
-    var fileExt = req.body.ext;
+exports.getUploadURL = function (userId, fileName, fileExt) {
+    var deferred = Q.defer();
 
     folders.saveFile({
-        userId: req.params.userId,
+        userId: userId,
         filename: fileName,
         ext: fileExt
     }).then(function (saved) {
-        callback(null, config.serverURL + '/file/' + saved._id + '/upload');
+        deferred.resolve(config.serverURL + '/file/' + saved._id + '/upload');
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - get URL to upload ', err);
+        return deferred.reject(err);
     })
 
+    return deferred.promise;
 };
-exports.folders = function (callback) {
-    folders.returnAllFolders(function (err, data) {
-        if (err) return err;
-        callback(null, data);
+
+exports.folders = function () {
+    var deferred = Q.defer();
+    folders.returnAllFolders().then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all folders ', err);
+        return deferred.reject(err);
+    })
+    return deferred.promise;
+};
+exports.foldersByUserId = function (userId) {
+    var deferred = Q.defer();
+
+    folders.retrunFoldersByUserId(userId).then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all folders by User Id', err);
+        return deferred.reject(err);
     })
 
+    return deferred.promise;
 };
-exports.foldersByUserId = function (req, res, callback) {
-    try {
-        folders.retrunFoldersByUserId(req.params.id).then(function (data) {
+exports.files = function (folder) {
+    var deferred = Q.defer();
 
-            callback(null, data);
-
-        }).fail(function (err) {
-
-            return callback(err);
-        })
-    } catch (e) {
-        console.log('greska', e)
-    };
-
-};
-exports.files = function (req, res, callback) {
-
-    folders.retrunAllFiles(req.params.folder).then(function (data) {
+    folders.retrunAllFiles(folder).then(function (data) {
 
         var files = data.files;
         var listAllFiles = [];
@@ -77,12 +83,11 @@ exports.files = function (req, res, callback) {
         files.forEach(function (fileName, index, list) {
 
             fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
-               
+
                 var filesData = {
                     files: listAllFiles,
                     path: "file/" + fileName._id + '.' + fileName.ext + "/file"
                 };
-
                 listAllFiles.push({
                     content: content,
                     filename: fileName.filename,
@@ -90,64 +95,64 @@ exports.files = function (req, res, callback) {
                     ext: fileName.ext,
 
                 })
-
                 if (listAllFiles.length - 1 === list.length - 1) {
-
-                    callback(null, filesData)
+                    deferred.resolve(filesData);
                 }
-
             });
-
-
         })
 
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all files', err);
+        return deferred.reject(err);
     })
+
+    return deferred.promise;
 };
-exports.filesByUserId = function (req, res, callback) {
-    try {
-        folders.retrunFilesByUserId(req.params.id, req.params.folder).then(function (data) {
+exports.filesByUserId = function (userId, folder) {
+    var deferred = Q.defer();
+    folders.retrunFilesByUserId(userId, folder).then(function (data) {
 
-            var files = data.files;
-            var listAllFiles = [];
+        var files = data.files;
+        var listAllFiles = [];
 
-            files.forEach(function (fileName, index, list) {
+        files.forEach(function (fileName, index, list) {
 
-                fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
-                    var filesData = {
-                        files: listAllFiles,
-                        path: "file/" + fileName._id + '.' + fileName.ext + "/file",
-                    };
-                    listAllFiles.push({
-                        content: content,
-                        filename: fileName.filename,
-                        _id: fileName._id,
-                        ext: fileName.ext
-                    })
-                    if (listAllFiles.length - 1 === list.length - 1) {
-                        callback(null, filesData)
-                    }
-                });
-            })
-
-        }).fail(function (err) {
-            return callback(err);
+            fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
+                var filesData = {
+                    files: listAllFiles,
+                    path: "file/" + fileName._id + '.' + fileName.ext + "/file",
+                };
+                listAllFiles.push({
+                    content: content,
+                    filename: fileName.filename,
+                    _id: fileName._id,
+                    ext: fileName.ext
+                })
+                if (listAllFiles.length - 1 === list.length - 1) {
+                    deferred.resolve(filesData);
+                }
+            });
         })
-    } catch (e) {
-        console.log('greska2', e)
-    };
+
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all files by User Id', err);
+        return deferred.reject(err);
+    })
+    return deferred.promise;
 }
 
-exports.deleteFile = function (req, res, callback) {
-    fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
+exports.deleteFile = function (file, fileId) {
+    var deferred = Q.defer();
+    fs.unlink(config.file.destination + "/" + file, function (err) {
         if (err) {
-            return err;
+            logger.error('ERROR Local storage - delete', err);
+            return deferred.reject(err);
         } else {
-            callback(
-                folders.deleteFileByUser(req.params.id).then(function (data) {
-                    callback(null, data);
-                })
-            );
+            folders.deleteFileByUser(fileId).then(function (data) {
+                deferred.resolve(data);
+            })
+
         }
     });
-
+    return deferred.promise;
 };

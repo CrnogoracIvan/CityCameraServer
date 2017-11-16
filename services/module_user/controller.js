@@ -1,65 +1,65 @@
 var storage = require('../../lib/db/model/users');
 var jwt = require('jsonwebtoken');
+var Q = require('q');
 var error = require('../../lib/error').error;
 
-exports.register = function (req, res, callback) {
-  storage.getUser(req.body.username, function (err, data) {
-    if (err) {
-      return callback(error('INTERNAL_ERROR'));
-    }
+exports.register = function (req, res, next) {
+  var username = req.body.username;
+  var userData = req.body;
+  storage.getUser(username).then(function (data) {
     if (data) {
-      return callback(error('ALREADY_REGISTERED'));
+      return next(error('ALREADY_REGISTERED'));
     }
     if (req.body.username == '') {
-      return callback(error('LENGTH_REQUIRED'));
+      return next(error('LENGTH_REQUIRED'));
     }
     if (req.body.email == '') {
-      return callback(error('LENGTH_REQUIRED'));
+      return next(error('LENGTH_REQUIRED'));
     }
     if (req.body.password == '') {
-      return callback(error('LENGTH_REQUIRED'));
+      return next(error('LENGTH_REQUIRED'));
     }
-    storage.saveUser(req.body.username, req.body, function (err) {
-      if (err) {
-        return err;
-      }
+    storage.saveUser(username, userData).then(function (data) {
       res.status(200);
       res.json({
         isSucces: true
-      });
+      })
+    }).fail(function (err) {
+      logger.error('ERROR CTRL - regiser user ', err);
+      return next(err);
     });
+  }).fail(function (err) {
+    logger.error('ERROR CTRL - check if user exists ', err);
+    return next(err);
   });
 };
 
-
-exports.login = function (req, res, callback) {
-  storage.getUser(req.body.username, function (err, data) {
+exports.login = function (req, res, next) {
+  var username = req.body.username;
+  storage.getUser(username).then(function (data) {
     if (!data) {
-      return callback(error('NOT_FOUND'));
+      return next(error('NOT_FOUND'));
     }
     data = data.toJSON();
-    if (err) {
-      return callback(error('WRONG_CREDENTIALS'));
-    }
     if (data.password == req.body.password) {
       _generateToken(data, function (token) {
         data.token = token;
         console.log("login data + token: ", data)
         res.status(200);
-        res.json({token: token, user:data});
+        res.json({
+          token: token,
+          user: data
+        });
       });
     } else {
-      return callback(error('WRONG_CREDENTIALS'));
+      return next(error('WRONG_CREDENTIALS'));
     }
+  }).fail(function (err) {
+    logger.error('ERROR CTRL - login user ', err);
+    return next(err);
   });
 };
 
-/**
- * Generate jwt token
- * @param data
- * @param callback
- * @private
- */
 var _generateToken = function (data, callback) {
   var token = jwt.sign({
     username: data.username,
@@ -82,7 +82,9 @@ exports.listAllUsers = function (req, res, next) {
 };
 
 exports.updateUser = function (req, res, callback) {
-  storage.findUpdateUser(req.params.user_id, req.body, function (err, user) {
+  var userId = req.params.user_id;
+  var userData = req.body;
+  storage.findUpdateUser(userId, userData, function (err, user) {
     if (err) {
       return err;
     }
@@ -90,5 +92,3 @@ exports.updateUser = function (req, res, callback) {
     res.json(user);
   })
 }
-
-
