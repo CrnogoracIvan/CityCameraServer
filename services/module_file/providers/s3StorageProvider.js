@@ -13,6 +13,7 @@ var s3 = new AWS.S3({
 
 exports.getUploadURL = function (userId, fileName, fileExt) {
     var deferred = Q.defer();
+
     folders.saveFile({
         userId: userId,
         filename: fileName,
@@ -28,7 +29,6 @@ exports.getUploadURL = function (userId, fileName, fileExt) {
         };
 
         s3.getSignedUrl('putObject', options, function (err, url) {
-
             if (err) {
                 logger.error('ERROR S3 storage - get Signed Url', err);
                 return deferred.reject(err);
@@ -36,12 +36,11 @@ exports.getUploadURL = function (userId, fileName, fileExt) {
             deferred.resolve({
                 url: url
             });
-
         });
     }).fail(function (err) {
         logger.error('ERROR S3 storage - get URL to upload and save to DB', err);
         return deferred.reject(err);
-    })
+    });
     return deferred.promise;
 };
 exports.folders = function () {
@@ -52,7 +51,7 @@ exports.folders = function () {
     }).fail(function (err) {
         logger.error('ERROR S3 storage - list all folders ', err);
         return deferred.reject(err);
-    })
+    });
 
     return deferred.promise;
 };
@@ -64,13 +63,14 @@ exports.foldersByUserId = function (userId) {
     }).fail(function (err) {
         logger.error('ERROR S3 storage - list all folders by User Id', err);
         return deferred.reject(err);
-    })
+    });
 
     return deferred.promise;
 };
 
 exports.files = function (folder) {
     var deferred = Q.defer();
+
     folders.retrunAllFiles(folder).then(function (data) {
         deferred.resolve(data);
     }).fail(function (err) {
@@ -88,17 +88,19 @@ exports.filesByUserId = function (userId, folder) {
     }).fail(function (err) {
         logger.error('ERROR S3 storage - list all files by User ID', err);
         return deferred.reject(err);
-    })
+    });
 
     return deferred.promise;
 }
 
 exports.deleteFile = function (file, fileId) {
     var deferred = Q.defer();
+
     var urlParams = {
         Bucket: config.bucketName,
         Key: file
     };
+
     s3.deleteObject(urlParams, function (err, data) {
         if (err) {
             logger.error('ERROR S3 storage - delete', err);
@@ -106,8 +108,9 @@ exports.deleteFile = function (file, fileId) {
         } else {
             folders.deleteFileByUser(fileId).then(function (data) {
                 deferred.resolve(data);
-            })
+            });
         }
     });
+    
     return deferred.promise;
 };

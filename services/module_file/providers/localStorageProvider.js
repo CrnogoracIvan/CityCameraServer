@@ -7,15 +7,16 @@ var path = require("path"); //This module contains utilities for handling and tr
 var folders = require('../../../lib/db/model/folders');
 
 var storage = multer.diskStorage({
-    destination: function (req, file, callback) {
 
+    destination: function (req, file, callback) {
         callback(null, config.file.destination + "/");
     },
     filename: function (req, file, callback) {
-        console.log('filname multer', file);
-        console.log('muler req', req.params.userId);
-        console.log('muler file.originalname>>>>>>', file.originalname);
-        file.originalname = req.params.userId + '.jpg'
+
+        var findExt = file.originalname.lastIndexOf(".");
+        var ext = file.originalname.substring(findExt);
+        
+        file.originalname = req.params.userId + ext;
         callback(null, file.originalname);
     }
 });
@@ -24,14 +25,16 @@ var upload = multer({
     storage: storage
 }).single("userphoto");
 
-
-exports.upload = function (req, res, callback) {
+exports.upload = function (req, res) {
+    var deferred = Q.defer();
     upload(req, res, function (err) {
         if (err) {
-            return err;
+            logger.error('ERROR Local storage - Upload img ', err);
+            deferred.reject(err);
         }
-        callback();
+        deferred.resolve();
     });
+    return deferred.promise;
 };
 exports.getUploadURL = function (userId, fileName, fileExt) {
     var deferred = Q.defer();
@@ -45,19 +48,21 @@ exports.getUploadURL = function (userId, fileName, fileExt) {
     }).fail(function (err) {
         logger.error('ERROR Local storage - get URL to upload ', err);
         return deferred.reject(err);
-    })
+    });
 
     return deferred.promise;
 };
 
 exports.folders = function () {
     var deferred = Q.defer();
+
     folders.returnAllFolders().then(function (data) {
         deferred.resolve(data);
     }).fail(function (err) {
         logger.error('ERROR Local storage - list all folders ', err);
         return deferred.reject(err);
-    })
+    });
+
     return deferred.promise;
 };
 exports.foldersByUserId = function (userId) {
@@ -68,7 +73,7 @@ exports.foldersByUserId = function (userId) {
     }).fail(function (err) {
         logger.error('ERROR Local storage - list all folders by User Id', err);
         return deferred.reject(err);
-    })
+    });
 
     return deferred.promise;
 };
@@ -104,12 +109,13 @@ exports.files = function (folder) {
     }).fail(function (err) {
         logger.error('ERROR Local storage - list all files', err);
         return deferred.reject(err);
-    })
+    });
 
     return deferred.promise;
 };
 exports.filesByUserId = function (userId, folder) {
     var deferred = Q.defer();
+
     folders.retrunFilesByUserId(userId, folder).then(function (data) {
 
         var files = data.files;
@@ -132,17 +138,19 @@ exports.filesByUserId = function (userId, folder) {
                     deferred.resolve(filesData);
                 }
             });
-        })
+        });
 
     }).fail(function (err) {
         logger.error('ERROR Local storage - list all files by User Id', err);
         return deferred.reject(err);
-    })
+    });
+
     return deferred.promise;
 }
 
 exports.deleteFile = function (file, fileId) {
     var deferred = Q.defer();
+
     fs.unlink(config.file.destination + "/" + file, function (err) {
         if (err) {
             logger.error('ERROR Local storage - delete', err);
@@ -150,9 +158,10 @@ exports.deleteFile = function (file, fileId) {
         } else {
             folders.deleteFileByUser(fileId).then(function (data) {
                 deferred.resolve(data);
-            })
+            });
 
         }
     });
+
     return deferred.promise;
 };

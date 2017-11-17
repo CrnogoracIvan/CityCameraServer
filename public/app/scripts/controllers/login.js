@@ -8,6 +8,4 @@ app.controller('LoginCtrl', function ($scope, $location, CityCamService, $rootSc
         UiService.warningDialog('Error login', 'Username/password is incorrect.');
       });
   };
-
-
 });

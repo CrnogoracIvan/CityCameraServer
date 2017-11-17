@@ -21,7 +21,7 @@ var config = {
       "keepLogsDays": 5
     }
   },
-  "provider": "s3",
+  "provider": "local",
   "awsCredentials": {
     "destination": "aws.json"
   },

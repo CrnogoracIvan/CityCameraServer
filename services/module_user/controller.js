@@ -4,8 +4,10 @@ var Q = require('q');
 var error = require('../../lib/error').error;
 
 exports.register = function (req, res, next) {
+
   var username = req.body.username;
   var userData = req.body;
+  
   storage.getUser(username).then(function (data) {
     if (data) {
       return next(error('ALREADY_REGISTERED'));
@@ -35,7 +37,9 @@ exports.register = function (req, res, next) {
 };
 
 exports.login = function (req, res, next) {
+
   var username = req.body.username;
+
   storage.getUser(username).then(function (data) {
     if (!data) {
       return next(error('NOT_FOUND'));
@@ -72,23 +76,26 @@ var _generateToken = function (data, callback) {
 
 
 exports.listAllUsers = function (req, res, next) {
-  storage.findAll(function (err, data) {
-    if (err) {
-      return next(err);
-    }
+
+  storage.findAll().then(function (data) {
     res.status(200);
     res.json(data);
+  }).fail(function (err) {
+    logger.error('ERROR CTRL - list all users ', err);
+    return next(err);
   });
 };
 
-exports.updateUser = function (req, res, callback) {
+exports.updateUser = function (req, res, next) {
+
   var userId = req.params.user_id;
   var userData = req.body;
-  storage.findUpdateUser(userId, userData, function (err, user) {
-    if (err) {
-      return err;
-    }
+
+  storage.findUpdateUser(userId, userData).then(function (user) {
     res.status(200);
     res.json(user);
-  })
+  }).fail(function (err) {
+    logger.error('ERROR CTRL - update users ', err);
+    return next(err);
+  });
 }

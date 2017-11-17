@@ -8,7 +8,6 @@ app.controller('UserCtrl', function ($scope, $location, CityCamService, $rootSco
                 UiService.warningDialog('Error create', 'Forbiden access');
             });
 
-
     $scope.update = function (user, index) {
         user.isAdmin = !user.isAdmin;
         CityCamService.update(user)
@@ -19,5 +18,4 @@ app.controller('UserCtrl', function ($scope, $location, CityCamService, $rootSco
                     UiService.warningDialog('Error create', 'Forbiden access');
                 });
     }
-
 });

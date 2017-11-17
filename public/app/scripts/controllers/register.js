@@ -2,7 +2,6 @@ app.controller('RegisterCtrl', function ($scope, CityCamService, $rootScope, $st
   $scope.register = function () {
     CityCamService.register($scope.user)
       .then(function (data, status, headers) {
-        // SessionService.storeSession(data);
         $rootScope.alert = {
           show: true,
           context: {

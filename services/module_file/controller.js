@@ -2,15 +2,15 @@ var error = require('../../lib/error').error;
 var provider = require('./providers/');
 
 exports.upload = function (req, res, next) {
-  provider.upload(req, res, function (err, data) {
-    if (err) {
-      return next(err);
-    }
+  provider.upload(req, res).then( function (data) {
     res.status(200);
     res.json({
       isSuccess: true,
       message: 'Image uploaded!'
     });
+  }).fail(function (err) {
+    logger.error('ERROR CTRL - upload img', err);
+    return next(err);
   });
 };
 exports.getUploadURL = function (req, res, next) {
@@ -78,9 +78,12 @@ exports.filesByUserId = function (req, res, next) {
     return next(err);
   });
 };
+
 exports.deleteFile = function (req, res, next) {
+
   var file = req.body.file;
   var fileId = req.params.id;
+
   provider.deleteFile(file, fileId).then(function (err) {
 
     res.status(200);

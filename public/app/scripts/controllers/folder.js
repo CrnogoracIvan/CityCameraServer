@@ -31,11 +31,6 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
       UiService.warningDialog('Forbiden access');
     });
 
-
-  /**
-   * Invoke City Camera to list files from specific folder
-   * @param folder - folder name
-   */
   $scope.listFiles = function (folder) {
 
     $scope.selected = 0;
@@ -56,13 +51,11 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
         }
         if ($scope.user.isAdmin) {
           $scope.files = data.data.files;
-          console.log('data list files admin', data)
         } else {
           //List files by Id
           CityCamService.listFilesById(folder)
             .then(function (data) {
               $scope.files = data.data.files;
-              console.log('data list files user', data)
             }, function (err) {
               return err;
             })
@@ -71,12 +64,6 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
         return err;
       });
   };
-
-
-  /**
-   * Invoke City Camera delete file API
-   * @param file
-   */
 
   $scope.deleteFile = function (file) {
     console.log('file delete', file)

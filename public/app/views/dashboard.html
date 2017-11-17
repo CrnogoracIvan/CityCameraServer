@@ -11,18 +11,19 @@
         </div>
         <ul class="nav nav-sidebar left-sidebar">
           <li><a ui-sref="dashboard" ui-sref-active-eq="activeLink">Dashboard</a></li>
-          <li><a ui-sref="folder" ui-sref-active="activeLink" >Folder</a></li>
-          <li ng-if="user.isAdmin"><a ui-sref="list" ui-sref-active="activeLink" >List users</a></li>
+          <li><a ui-sref="folder" ui-sref-active="activeLink">Folder</a></li>
+          <li ng-if="user.isAdmin"><a ui-sref="list" ui-sref-active="activeLink">List users</a></li>
         </ul>
-      
+
       </div>
       <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 col-lg-10 col-lg-offset-2 main wrapper clearfix" ui-view>
         <h1 class="dash-title">Dashboard</h1>
-        <h4>Click to see list of folders and files <a class="btn-dash" ui-sref="folder">Folders</a></h4>
-      <form action="/file/5a0c3b144d8e4c42435e5c9a/upload" method="POST" enctype = "multipart/form-data">
-    <input type="file" name="userphoto" >
-   <input type="submit">
- </form> 
+        <h4 class="dash-subtitle">Click to see list of folders and files <a class="btn-dash" ui-sref="folder">Folders</a></h4>
+        <h4 ng-show="user.isAdmin" class="dash-subtitle">Click to see list of users <a class="btn-dash" ui-sref="list">Users</a></h4>
+        <!--<form action="/file/5a0ea7d886bc8120c1dcc423/upload" method="POST" enctype="multipart/form-data">
+          <input type="file" name="userphoto">
+          <input type="submit">
+        </form>-->
       </div>
     </div>
   </div>
