@@ -2,7 +2,7 @@ var error = require('../../lib/error').error;
 var provider = require('./providers/');
 
 exports.upload = function (req, res, next) {
-  provider.upload(req, res).then( function (data) {
+  provider.upload(req, res).then(function (data) {
     res.status(200);
     res.json({
       isSuccess: true,
@@ -56,7 +56,7 @@ exports.foldersByUserId = function (req, res, next) {
 exports.files = function (req, res, next) {
 
   var folder = req.params.folder;
-
+console.log('req.body',req.body)
   provider.files(folder).then(function (files) {
     res.status(200);
     res.json(files);
@@ -95,3 +95,4 @@ exports.deleteFile = function (req, res, next) {
     return next(err);
   });
 };
+

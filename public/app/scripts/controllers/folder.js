@@ -31,7 +31,7 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
       UiService.warningDialog('Forbiden access');
     });
 
-  $scope.listFiles = function (folder) {
+  $scope.listFiles = function (folder,status) {
 
     $scope.selected = 0;
 
@@ -66,7 +66,6 @@ app.controller('FolderCtrl', function ($scope, CityCamService, $rootScope, $stat
   };
 
   $scope.deleteFile = function (file) {
-    console.log('file delete', file)
     var idDb = file._id;
     var idLocS3 = file._id + '.' + file.ext;
     UiService.confirmDialog('Delete file', 'Are you sure you want to delete this file?', function (answer) {

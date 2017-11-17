@@ -15,8 +15,8 @@ var storage = multer.diskStorage({
 
         var findExt = file.originalname.lastIndexOf(".");
         var ext = file.originalname.substring(findExt);
-        
-        file.originalname = req.params.userId + ext;
+
+        file.originalname = req.params.fileId + ext;
         callback(null, file.originalname);
     }
 });
@@ -27,15 +27,23 @@ var upload = multer({
 
 exports.upload = function (req, res) {
     var deferred = Q.defer();
-    upload(req, res, function (err) {
+    var fileId = req.params.fileId;
+     var status= true;
+    console.log('upload storage', status)
+    upload(req, res, function (err,data) {
         if (err) {
             logger.error('ERROR Local storage - Upload img ', err);
             deferred.reject(err);
         }
-        deferred.resolve();
+        folders.updateStatus(fileId,status).then(function (data) {
+            console.log('data111', data)
+             deferred.resolve(data);
+        })
+   
     });
     return deferred.promise;
 };
+
 exports.getUploadURL = function (userId, fileName, fileExt) {
     var deferred = Q.defer();
 
