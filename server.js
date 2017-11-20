@@ -7,7 +7,8 @@ var express    = require('express'),
   mongoose   = require('mongoose'),
   path       = require('path'),
   http       = require('http'),
-  directory  = require('serve-index');
+  directory  = require('serve-index'),
+  scheduler  = require('./config/schedule/');
 
 var router                   = require('./router'),
   routeValidatorMiddleware = require('./middleware/routeValidatorMiddleware'),
@@ -53,6 +54,7 @@ mongoose.connect(config.mongodb.host + config.mongodb.db, {
 
     app.server.listen(app.get("port"), function () {
       logger.info("Server running on port: ", app.get('port'));
+      scheduler.start();
     });
 
   });
