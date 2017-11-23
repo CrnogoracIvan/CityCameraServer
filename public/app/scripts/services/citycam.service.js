@@ -1,39 +1,64 @@
-app.service('CityCamService', function($http) {
+app.service('CityCamService', function ($http, $rootScope) {
   return {
-    login: function(user) {
+    login: function (user) {
       return $http({
         method: 'POST',
-        url: '/admin/login',
+        url: '/user/login',
         data: user
       });
     },
-    register: function(user) {
+    register: function (user) {
       return $http({
         method: 'POST',
-        url: '/admin/register',
+        url: '/user/register',
         data: user
       });
     },
-    folder: function(user) {
+    listUsers: function () {
+      return $http({
+        method: 'GET',
+        url: '/user/list'
+      });
+    },
+    folder: function (user) {
       return $http({
         method: 'GET',
         url: '/file/folders',
         data: user
       });
     },
-    deleteFile: function(filename) {
+    folderByUserId: function () {
+      return $http({
+        method: 'GET',
+        url: '/file/folders/' + $rootScope.userId
+      });
+    },
+    deleteFile: function (filename, id) {
       return $http({
         method: 'DELETE',
-        url: '/file/delete',
+        url: '/file/delete/' + id,
         data: {
           file: filename
         }
       });
     },
-    listFolder: function(folder) {
+    listFiles: function (folder) {
       return $http({
         method: 'GET',
         url: '/file/' + folder + '/files'
+      });
+    },
+    listFilesById: function (folder) {
+      return $http({
+        method: 'GET',
+        url: '/file/' + $rootScope.userId + '/' + folder + '/files'
+      });
+    },
+    update: function (user) {
+      return $http({
+        method: 'PUT',
+        url: '/user/' + user._id,
+        data: user
       });
     }
   };

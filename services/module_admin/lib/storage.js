@@ -1,19 +1,19 @@
-var Users = require('./users');
+var Admin = require('./admin');
 var error = require('../../../lib/error').error;
 
 /**
- * Store user to db
+ * Store Admin to db
  * @param username
  * @param data
  * @param callback
  */
-exports.saveUser = function(username, data, callback) {
-  var user = new Users({
+exports.saveAdmin = function(username, data, callback) {
+  var admin = new Admin({
     password: data.password,
     username: data.username,
     email: data.email
   });
-  user.save(function(err) {
+  admin.save(function(err) {
     if (err) {
       return callback(error('INTERNAL_ERROR'));
     }
@@ -22,15 +22,15 @@ exports.saveUser = function(username, data, callback) {
 };
 
 /**
- * Fetch user from db
+ * Fetch Admin from db
  * @param username
  * @param callback
  */
-exports.getUser = function(username, callback) {
-  Users.findOne({username: username}, function(err, user) {
+exports.getAdmin = function(username, callback) {
+  Admin.findOne({username: username}, function(err, admin) {
     if (err) {
       return callback(error('INTERNAL_ERROR'));
     }
-    callback(null, user);
+    callback(null, admin);
   });
 };

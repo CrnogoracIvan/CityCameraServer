@@ -1,119 +1,175 @@
 var express = require("express");
+var Q = require('q');
 var multer = require("multer"); //is midleware for handling multipart/form-data,(primarily used for uploading files)
 var moment = require("moment"); //is js library for parsing, manipulating, validating and formating data
 var fs = require("fs");
 var path = require("path"); //This module contains utilities for handling and transforming file paths.
+var folders = require('../../../lib/db/model/folders');
 
 var storage = multer.diskStorage({
+
     destination: function (req, file, callback) {
-        fs.exists(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (exists) {
-            if (exists) {
-                callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
-            } else {
-                fs.mkdir(config.file.destination + "/" + moment().format("YYYY_MM_DD"), function (err) {
-                    if (err) {
-                        return err;
-                    } else {
-                        callback(null, config.file.destination + "/" + moment().format("YYYY_MM_DD"));
-                    }
-                });
-            }
-        });
+        callback(null, config.file.destination + "/");
     },
     filename: function (req, file, callback) {
+
+        var findExt = file.originalname.lastIndexOf(".");
+        var ext = file.originalname.substring(findExt);
+
+        file.originalname = req.params.fileId + ext;
         callback(null, file.originalname);
     }
-
 });
 
 var upload = multer({
     storage: storage
 }).single("userphoto");
 
-
-exports.upload = function (req, res, callback) {
-    upload(req, res, function (err) {
+exports.upload = function (req, res) {
+    var deferred = Q.defer();
+    var fileId = req.params.fileId;
+     var status= true;
+    console.log('upload storage', status)
+    upload(req, res, function (err,data) {
         if (err) {
-            return err;
+            logger.error('ERROR Local storage - Upload img ', err);
+            deferred.reject(err);
         }
-        callback();
+        folders.updateStatus(fileId,status).then(function (data) {
+            console.log('data111', data)
+             deferred.resolve(data);
+        })
+   
     });
+    return deferred.promise;
 };
 
-exports.folders = function (callback) {
-    var folders = [];
-    fs.readdir(config.file.destination, function (err, files) {
-        if (err) {
-            return next(err)
-        }
-        if (files.length === 0) {
-            return ({
-                folders: folders
-            });
-        } else {
-            files.map(function (file) {
-                return path.join(config.file.destination, file);
-            }).filter(function (file) {
-                return fs.statSync(file).isDirectory();
-            }).forEach(function (file, index, list) {
+exports.getUploadURL = function (userId, fileName, fileExt) {
+    var deferred = Q.defer();
 
-                file = path.basename(file);
-                folders.push(file);
-
-                if (index === list.length - 1) {
-                    return ({
-                        folders: folders
-                    });
-                }
-            });
-        }
-        callback(null,folders);
+    folders.saveFile({
+        userId: userId,
+        filename: fileName,
+        ext: fileExt
+    }).then(function (saved) {
+        deferred.resolve(config.serverURL + '/file/' + saved._id + '/upload');
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - get URL to upload ', err);
+        return deferred.reject(err);
     });
+
+    return deferred.promise;
 };
 
-exports.files = function (req, res, next, callback) {
+exports.folders = function () {
+    var deferred = Q.defer();
 
-    var files = [];
-    fs.readdir(config.file.destination + "/" + req.params.folder, function (err, filenames) {
+    folders.returnAllFolders().then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all folders ', err);
+        return deferred.reject(err);
+    });
 
-        if (err) {
-            return next(err);
-        }
-        var filesData = {
-            files: files,
-            path: "file/" + req.params.folder + "/file"
-        };
-        if (filenames.length == 0) {
-            callback(null,filesData);
-        }
-        filenames.forEach(function (file, index, list) {
+    return deferred.promise;
+};
+exports.foldersByUserId = function (userId) {
+    var deferred = Q.defer();
 
-            fs.readFile(config.file.destination + "/" + req.params.folder + "/" + file, "base64", function (err, content) {
-                if (err) {
-                    return next(err);
+    folders.retrunFoldersByUserId(userId).then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all folders by User Id', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+};
+exports.files = function (folder) {
+    var deferred = Q.defer();
+
+    folders.retrunAllFiles(folder).then(function (data) {
+
+        var files = data.files;
+        var listAllFiles = [];
+
+        files.forEach(function (fileName, index, list) {
+
+            fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
+
+                var filesData = {
+                    files: listAllFiles,
+                    path: "file/" + fileName._id + '.' + fileName.ext + "/file"
+                };
+                listAllFiles.push({
+                    content: content,
+                    filename: fileName.filename,
+                    _id: fileName._id,
+                    ext: fileName.ext,
+
+                })
+                if (listAllFiles.length - 1 === list.length - 1) {
+                    deferred.resolve(filesData);
                 }
-                files.push({
-                    filename: file,
-                    content: content
-                });
-                if (files.length - 1 === list.length - 1) {
-                    callback(null,filesData);
+            });
+        })
+
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all files', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+};
+exports.filesByUserId = function (userId, folder) {
+    var deferred = Q.defer();
+
+    folders.retrunFilesByUserId(userId, folder).then(function (data) {
+
+        var files = data.files;
+        var listAllFiles = [];
+
+        files.forEach(function (fileName, index, list) {
+
+            fs.readFile(config.file.destination + "/" + fileName._id + '.' + fileName.ext, "base64", function (err, content) {
+                var filesData = {
+                    files: listAllFiles,
+                    path: "file/" + fileName._id + '.' + fileName.ext + "/file",
+                };
+                listAllFiles.push({
+                    content: content,
+                    filename: fileName.filename,
+                    _id: fileName._id,
+                    ext: fileName.ext
+                })
+                if (listAllFiles.length - 1 === list.length - 1) {
+                    deferred.resolve(filesData);
                 }
             });
         });
-    });
-};
 
-exports.deleteFile = function (req, res, callback) {
-    fs.unlink(config.file.destination + "/" + req.body.file, function (err) {
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - list all files by User Id', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+}
+
+exports.deleteFile = function (file, fileId) {
+    var deferred = Q.defer();
+
+    fs.unlink(config.file.destination + "/" + file, function (err) {
         if (err) {
-            next(err);
+            logger.error('ERROR Local storage - delete', err);
+            return deferred.reject(err);
+        } else {
+            folders.deleteFileByUser(fileId).then(function (data) {
+                deferred.resolve(data);
+            });
+
         }
-        callback();
     });
 
-};
-
-exports.getUploadURL = function (req, res, callback) {
-  callback(config.serverURL+'/file/upload');
+    return deferred.promise;
 };

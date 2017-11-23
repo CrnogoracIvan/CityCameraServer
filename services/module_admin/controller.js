@@ -2,13 +2,13 @@ var storage = require('./lib/storage');
 var jwt = require('jsonwebtoken');
 var error = require('../../lib/error').error;
 /**
- * Register new user
+ * Register new admin
  * @param req
  * @param res
  * @param callback
  */
 exports.register = function (req, res, callback) {
-  storage.getUser(req.body.username, function (err, data) {
+  storage.getAdmin(req.body.username, function (err, data) {
     if (err) {
       return callback(error('INTERNAL_ERROR'));
     }
@@ -24,7 +24,7 @@ exports.register = function (req, res, callback) {
     if (req.body.password == '') {
       return callback(error('LENGTH_REQUIRED'));
     }
-    storage.saveUser(req.body.username, req.body, function (err) {
+    storage.saveAdmin(req.body.username, req.body, function (err) {
       if (err) {
         return callback(error('INTERNAL_ERROR'));
       }
@@ -34,13 +34,13 @@ exports.register = function (req, res, callback) {
 };
 
 /**
- * Authenticate already registered user
+ * Authenticate already registered Admin
  * @param req
  * @param res
  * @param callback
  */
 exports.login = function (req, res, callback) {
-  storage.getUser(req.body.username, function (err, data) {
+  storage.getAdmin(req.body.username, function (err, data) {
     if (!data) {
       return callback(error('NOT_FOUND'));
     }

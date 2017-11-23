@@ -6,9 +6,9 @@ var app = angular.module('citycamera', [
     'angular-loading-bar',
     'chart.js'
   ])
-  .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
 
-    $urlRouterProvider.otherwise(function($injector) {
+    $urlRouterProvider.otherwise(function ($injector) {
       var $state = $injector.get('$state');
 
       $state.go('login');
@@ -36,16 +36,27 @@ var app = angular.module('citycamera', [
         templateUrl: '/partials/register.html',
         controller: 'RegisterCtrl'
       })
+      .state('list', {
+        url: '/list',
+        isPublic: false,
+        parent: 'dashboard',
+        templateUrl: '/partials/list.html',
+        controller: 'UserCtrl'
+      })
       .state('dashboard', {
         url: '/dashboard',
         isPublic: false,
         parent: 'base',
-        templateUrl: '/partials/dashboard.html'
+        templateUrl: '/partials/dashboard.html',
+        controller: 'LoginCtrl'
+
       })
       .state('folder', {
         url: '/folders',
+        isPublic: false,
         parent: 'dashboard',
         templateUrl: '/partials/folder.html',
         controller: 'FolderCtrl'
       })
+
   });

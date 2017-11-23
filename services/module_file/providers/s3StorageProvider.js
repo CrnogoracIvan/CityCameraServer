@@ -1,110 +1,116 @@
 var express = require('express');
+var Q = require('q');
 var AWS = require('aws-sdk');
 var fs = require("fs");
 var path = require("path");
 var moment = require("moment");
-
+var folders = require('../../../lib/db/model/folders');
 AWS.config.loadFromPath(config.awsCredentials.destination);
 
 var s3 = new AWS.S3({
     signatureVersion: "v4"
 });
 
-exports.getUploadURL = function (req, res, callback) {
-    var folder = moment().format('YYYY-MM-DD') + '/';
-    var fileName = req.body.file;
-    var fileExt = req.body.ext;
-    //console.log(fileName, fileExt,req.body)
-    var options = {
-        Bucket: config.bucketName,
-        Key: folder + fileName + '.' + fileExt,
-        Expires: 600, //600 sec
-        ContentType: 'multipart/form-data',
-        ACL: 'public-read'
-    };
-    s3.getSignedUrl('putObject', options, function (err, url) {
-            if (err) {
-                return callback(err);
-            }
-            callback(null, {url: url});
-        });
-};
-exports.folders = function (callback) {
-    var params = {
-        Bucket: config.bucketName
-    };
-    var folders = [];
-    s3.listObjects(params, function (err, data) {
-        if (err) {
-            return err;
-        } else {
-            var bucketContents = data.Contents;
+exports.getUploadURL = function (userId, fileName, fileExt) {
+    var deferred = Q.defer();
 
-            bucketContents.forEach(function (file, index) {
+    folders.saveFile({
+        userId: userId,
+        filename: fileName,
+        ext: fileExt
+    }).then(function (saved) {
 
-                var test = bucketContents[index].Key;
-                var key = test.substring(0, test.indexOf('/'));
-
-                if (key !== "" && folders.indexOf(key) === -1) {
-                    folders.push(key);
-                }
-
-                return ({
-                    folders: folders
-                });
-            })
-            callback(null, folders);
-        }
-    });
-
-};
-exports.files = function (req, res, next, callback) {
-
-    var params = {
-        Bucket: config.bucketName
-    };
-    var files = [];
-    s3.listObjects(params, function (err, data) {
-        var filesData = {
-            files: files,
-            path: null
+        var options = {
+            Bucket: config.bucketName,
+            Key: saved._id + '.' + fileExt,
+            Expires: 600, //600 sec
+            ContentType: 'multipart/form-data',
+            ACL: 'public-read'
         };
-        if (err) {
-            return err;
-        } else {
-            var bucketContents = data.Contents;
 
-            bucketContents.forEach(function (file, index) {
-
-                var urlParams = {
-                    Bucket: config.bucketName,
-                    Key: bucketContents[index].Key
-                };
-                s3.getSignedUrl('getObject', urlParams, function (err, url) {
-
-                    files.push({
-                        filename: bucketContents[index].Key,
-                        content: url
-                    });
-
-                    if (bucketContents.length - 1 === index) {
-                        callback(null, filesData);
-                    }
-                });
-            })
-        }
+        s3.getSignedUrl('putObject', options, function (err, url) {
+            if (err) {
+                logger.error('ERROR S3 storage - get Signed Url', err);
+                return deferred.reject(err);
+            }
+            deferred.resolve({
+                url: url
+            });
+        });
+    }).fail(function (err) {
+        logger.error('ERROR S3 storage - get URL to upload and save to DB', err);
+        return deferred.reject(err);
     });
+    return deferred.promise;
 };
-exports.deleteFile = function (req, res, callback) {
+exports.folders = function () {
+    var deferred = Q.defer();
+
+    folders.returnAllFolders().then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR S3 storage - list all folders ', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+};
+exports.foldersByUserId = function (userId) {
+    var deferred = Q.defer();
+
+    folders.retrunFoldersByUserId(userId).then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR S3 storage - list all folders by User Id', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+};
+
+exports.files = function (folder) {
+    var deferred = Q.defer();
+
+    folders.retrunAllFiles(folder).then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR S3 storage - list all files', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+}
+exports.filesByUserId = function (userId, folder) {
+    var deferred = Q.defer();
+
+    folders.retrunFilesByUserId(userId, folder).then(function (data) {
+        deferred.resolve(data);
+    }).fail(function (err) {
+        logger.error('ERROR S3 storage - list all files by User ID', err);
+        return deferred.reject(err);
+    });
+
+    return deferred.promise;
+}
+
+exports.deleteFile = function (file, fileId) {
+    var deferred = Q.defer();
+
     var urlParams = {
         Bucket: config.bucketName,
-        Key: req.body.file
+        Key: file
     };
+
     s3.deleteObject(urlParams, function (err, data) {
         if (err) {
-            return err;
+            logger.error('ERROR S3 storage - delete', err);
+            return deferred.reject(err);
         } else {
-            callback();
+            folders.deleteFileByUser(fileId).then(function (data) {
+                deferred.resolve(data);
+            });
         }
     });
+    
+    return deferred.promise;
 };
