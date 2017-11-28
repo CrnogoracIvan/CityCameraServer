@@ -53,10 +53,11 @@ exports.foldersByUserId = function (req, res, next) {
     return next(err);
   });
 };
+
 exports.files = function (req, res, next) {
 
   var folder = req.params.folder;
-console.log('req.body',req.body)
+
   provider.files(folder).then(function (files) {
     res.status(200);
     res.json(files);
@@ -65,6 +66,7 @@ console.log('req.body',req.body)
     return next(err);
   });
 };
+
 exports.filesByUserId = function (req, res, next) {
 
   var userId = req.params.id;
@@ -81,11 +83,10 @@ exports.filesByUserId = function (req, res, next) {
 
 exports.deleteFile = function (req, res, next) {
 
-  var file = req.body.file;
-  var fileId = req.params.id;
+  var fileId = req.params.fileId;
+  var userId = req.params.userId;
 
-  provider.deleteFile(file, fileId).then(function (err) {
-
+  provider.deleteFile(userId, fileId).then(function (err) {
     res.status(200);
     res.json({
       isSuccess: true
@@ -96,3 +97,17 @@ exports.deleteFile = function (req, res, next) {
   });
 };
 
+exports.adminDeleteFile = function (req, res, next) {
+
+  var fileId = req.params.fileId;
+
+  provider.deleteFileAdmin(fileId).then(function (err) {
+    res.status(200);
+    res.json({
+      isSuccess: true
+    });
+  }).fail(function (err) {
+    logger.error('ERROR CTRL - delete files', err);
+    return next(err);
+  });
+};

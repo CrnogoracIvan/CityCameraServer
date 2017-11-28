@@ -93,24 +93,32 @@ exports.filesByUserId = function (userId, folder) {
     return deferred.promise;
 }
 
-exports.deleteFile = function (file, fileId) {
+exports.deleteFile = function (userId, fileId) {
     var deferred = Q.defer();
 
-    var urlParams = {
-        Bucket: config.bucketName,
-        Key: file
-    };
+    folders.findById(fileId).then(function (file) {
 
-    s3.deleteObject(urlParams, function (err, data) {
-        if (err) {
-            logger.error('ERROR S3 storage - delete', err);
-            return deferred.reject(err);
-        } else {
-            folders.deleteFileByUser(fileId).then(function (data) {
-                deferred.resolve(data);
-            });
-        }
-    });
-    
+        var urlParams = {
+            Bucket: config.bucketName,
+            Key: file._id + '.' + file.ext
+        };
+
+        if (!file) return deferred.reject('ERROR Local storage - Not Found', err);
+        if (file.userId != userId) return deferred.reject('ERROR Local storage -Not Autorized', err);
+
+        s3.deleteObject(urlParams, function (err, data) {
+            if (err) {
+                logger.error('ERROR S3 storage - delete', err);
+                return deferred.reject(err);
+            } else {
+                folders.deleteFileByUser(fileId).then(function (data) {
+                    deferred.resolve(data);
+                });
+            }
+        });
+    }).fail(function (err) {
+        logger.error('ERROR S3 storage - delete', err);
+        return deferred.reject(err);
+    })
     return deferred.promise;
 };

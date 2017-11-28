@@ -1,0 +1,33 @@
+
+<div class="login-page">
+  <div class="row">
+    <div class="form-box  form-box col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+      <div class="img-box">
+        <img src="../../assets/images/avatar.png" class="user-avatar" />
+      </div>
+      <h1>CityCam</h1>
+      <h4>Please sign in</h4>
+      <form name="form" name="loginForm" (ngSubmit)="f.form.valid && login()" #f="ngForm">
+        <div class="form-content">
+          <input type="text" hidden />
+          <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+            <input [(ngModel)]="user.username" #username="ngModel" name="username" type="text" class="form-control input-underline input-lg"
+              placeholder="Username" minlength="4" maxlength="20" required>
+            <div *ngIf="f.submitted && !username.valid" class="help-block">Username is required </div>
+          </div>
+          <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+            <input [(ngModel)]="user.password" #password="ngModel" name="password" type="password" class="form-control input-underline input-lg"
+              placeholder="Password" minlength="4" maxlength="20" required>
+            <div *ngIf="f.submitted && !password.valid" class="help-block">Password is required </div>
+          </div>
+
+        </div>
+        <button type="submit" class="btn btn-green btn-lg btn-rounded">Login
+        </button>
+      </form>
+  
+      <a class="auth-link" [routerLink]="['/register']">Register</a>
+    </div>
+  </div>
+
+</div>

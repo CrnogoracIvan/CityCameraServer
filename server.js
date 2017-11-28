@@ -13,12 +13,14 @@ var express    = require('express'),
 var router                   = require('./router'),
   routeValidatorMiddleware = require('./middleware/routeValidatorMiddleware'),
   logRequest               = require("./middleware/loggerMiddleware").logRequest,
+  logErrors             = require("./middleware/loggerMiddleware").logErrors,
   errorHandlerMiddleware   = require("./middleware/errorHandlerMiddleware").errorHandlerMiddleware;
 
 var app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(logRequest);
 app.use(routeValidatorMiddleware);
 app.use(logRequest);
 
@@ -40,7 +42,8 @@ mongoose.connect(config.mongodb.host + config.mongodb.db, {
   //load routes recursively from services folders
   router.load(app, function () {
 
-    app.use('/', express.static(__dirname + '/build'));
+    app.use(logErrors);
+    app.use('/', express.static(__dirname + '/public/dist'));
     app.use(errorHandlerMiddleware);
 
     if (process.env.NODE_ENV != 'prod') {
