@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { Routes, RouterModule,RouterLinkActive } from '@angular/router';
+import { Routes, RouterModule, RouterLinkActive } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { AuthGuard } from "./_core/index";
 
@@ -20,19 +20,24 @@ const appRoutes: Routes = [
         children: [
             {
                 path: '',
-                component: BaseComponent,
-                 canActivateChild: [AuthGuard],
-            },
-            {
-                path: 'folder',
-                component: FoldersComponent,
-                     canActivateChild: [AuthGuard],
-            },
-            {
-                path: 'list',
-                component: ListusersComponent,
-                     canActivateChild: [AuthGuard],
-            },
+                canActivateChild: [AuthGuard],
+                children: [
+                    {
+                        path: '',
+                        component: BaseComponent,
+                    },
+                    {
+                        path: 'folder',
+                        component: FoldersComponent,
+
+                    },
+                    {
+                        path: 'list',
+                        component: ListusersComponent,
+
+                    }
+                ]
+            }
         ]
     },
     // otherwise redirect to login
