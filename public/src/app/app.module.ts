@@ -8,7 +8,7 @@ import { NgProgressModule, NgProgressBrowserXhr } from 'ngx-progressbar';
 
 import { routing } from './app.routing';
 import { HttpService, SessionService, AuthGuard } from './_core/index';
-import { AuthService, UserService, AlertService, FolderService } from './_services/index';
+import { AuthService, UserService, AlertService, FolderService,ModalService } from './_services/index';
 
 
 import { AlertComponent,ModalComponent } from './_directives/index';
@@ -51,6 +51,7 @@ export function httpServiceFactory(backend: XHRBackend, options: RequestOptions,
     AuthGuard,
     SessionService,
     FolderService,
+    ModalService,
     { provide: BrowserXhr, useClass: NgProgressBrowserXhr },
     {
       provide: HttpService,

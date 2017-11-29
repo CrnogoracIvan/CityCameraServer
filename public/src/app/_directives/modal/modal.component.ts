@@ -1,27 +1,21 @@
-import { Component, TemplateRef } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
- 
-@Component({
-  selector: 'modal-bs',
-  templateUrl: './modal.component.html'
+ import { Component, Input } from '@angular/core';
+ import { ModalService} from '../../_services/index';
+ @Component({
+    selector: 'modal',
+    templateUrl: 'modal.component.html',
+   
 })
-export class ModalComponent {
-  modalRef: BsModalRef;
-  message: string;
-  constructor(private modalService: BsModalService) {}
- 
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
-  }
- 
-  confirm(): void {
-    this.message = 'Confirmed!';
-    this.modalRef.hide();
-  }
- 
-  decline(): void {
-    this.message = 'Declined!';
-    this.modalRef.hide();
+ export class ModalComponent {
+    message: any;
+    constructor(
+      private _ModalService: ModalService
+   ) { }
+   
+   ngOnInit() {
+    //this function waits for a message from alert service, it gets 
+    //triggered when we call this from any other component
+    this._ModalService.getMessage().subscribe(message => {
+        this.message = message;
+    });
   }
 }

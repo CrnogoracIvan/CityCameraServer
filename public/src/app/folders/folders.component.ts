@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgProgress } from 'ngx-progressbar';
-import { AlertService, FolderService } from '../_services/index';
+import { AlertService, FolderService, ModalService } from '../_services/index';
 import { SessionService, HttpService } from '../_core/index';
 
 @Component({
@@ -27,6 +27,7 @@ export class FoldersComponent implements OnInit {
     private _FolderService: FolderService,
     private _AlertService: AlertService,
     private _SesionService: SessionService,
+    private _ModalService: ModalService,
 
   ) { }
 
@@ -73,30 +74,40 @@ export class FoldersComponent implements OnInit {
           this._AlertService.error('Can\'t load files' + error);
         });
       }
-
     }, error => {
       this.error = JSON.parse(error._body);
       this._AlertService.error('Can\'t load files' + error);
     });
   }
   deleteFile(file) {
-    var idDb = file._id;
-    this._FolderService.deleteFile(idDb).subscribe(files => {
-      let index = this.files.indexOf(file)
-      this.files.splice(index, 1);
-    }, error => {
-      this.error = JSON.parse(error._body);
-      this._AlertService.error('Can\'t delete file' + error);
-    });
+    this._ModalService.confirmThis("Are You sure you want delete this image?", () => {
+      var idDb = file._id;
+      this._FolderService.deleteFile(idDb).subscribe(files => {
+        let index = this.files.indexOf(file)
+        this.files.splice(index, 1);
+      }, error => {
+        this.error = JSON.parse(error._body);
+        this._AlertService.error('Can\'t delete file' + error);
+      });
+    }, () => {
+      //ACTION: Do this if user says NO
+      console.log("Do nothing");
+    })
   }
   deleteFileAdmin(file) {
-    var idDb = file._id;
-    this._FolderService.deleteFileAdmin(idDb).subscribe(files => {
-      let index = this.files.indexOf(file)
-      this.files.splice(index, 1);
-    }, error => {
-      this.error = JSON.parse(error._body);
-      this._AlertService.error('Can\'t delete file' + error);
-    });
+    this._ModalService.confirmThis("Are You sure you want delete this image?", () => {
+      var idDb = file._id;
+      //ACTION: Do this If user says YES
+      this._FolderService.deleteFileAdmin(idDb).subscribe(files => {
+        let index = this.files.indexOf(file)
+        this.files.splice(index, 1);
+      }, error => {
+        this.error = JSON.parse(error._body);
+        this._AlertService.error('Can\'t delete file' + error);
+      });
+    }, () => {
+      //ACTION: Do this if user says NO
+      console.log("Do nothing");
+    })
   }
 }

@@ -1,10 +1,26 @@
-<button type="button" class="btn btn-primary" (click)="openModal(template)">Open modal</button>
-<br><br>
-<pre>{{message}}</pre>
-<ng-template #template>
-  <div class="modal-body text-center">
-    <p>Do you want to confirm?</p>
-    <button type="button" class="btn btn-default" (click)="confirm()" >Yes</button>
-    <button type="button" class="btn btn-primary" (click)="decline()" >No</button>
+<div *ngIf="message" class="modal" tabindex="-1" role="dialog" style="display:block!important">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div *ngIf="message?.type == 'confirm'" class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <h3 class="text-center">{{message.text}}</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-center">
+              <a (click)="message.yesFn()">
+                            <button  class="btn btn-sc" >Yes</button>
+                        </a>
+              <a (click)="message.noFn()">
+                            <button class="btn btn-pm">No</button>
+                        </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</ng-template>
+</div>
