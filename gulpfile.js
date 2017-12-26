@@ -12,12 +12,20 @@ var gulp        = require('gulp'),
   es          = require('event-stream');
 
 
-gulp.task('apidoc', function (done) {
-  apidoc({
+//gulp.task('apidoc', function (done) {
+  //apidoc({
+    //src: "./services/",
+    //dest: "doc/",
+    //includeFilters: ["apiconst.js", "router.js", "postLoader.js"]
+  //},done);
+//});
+
+gulp.task('apidoc', function () {
+  apidoc.exec({
     src: "./services/",
     dest: "doc/",
-    includeFilters: ["apiconst.js", "router.js", "postLoader.js"]
-  },done);
+    includeFilters: ["apiconst.js", "router.js", "history.js"]
+  });
 });
 
 gulp.task('build_js', function (cb) {
