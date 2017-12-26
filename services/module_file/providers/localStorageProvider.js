@@ -27,19 +27,19 @@ var upload = multer({
 
 exports.upload = function (req, res) {
     var deferred = Q.defer();
+
     var fileId = req.params.fileId;
-     var status= true;
-    console.log('upload storage', status)
-    upload(req, res, function (err,data) {
+    var status = true;
+
+    upload(req, res, function (err, data) {
         if (err) {
             logger.error('ERROR Local storage - Upload img ', err);
             deferred.reject(err);
         }
-        folders.updateStatus(fileId,status).then(function (data) {
-            console.log('data111', data)
-             deferred.resolve(data);
+        folders.updateStatus(fileId, status).then(function (data) {
+            deferred.resolve(data);
         })
-   
+
     });
     return deferred.promise;
 };
@@ -156,20 +156,49 @@ exports.filesByUserId = function (userId, folder) {
     return deferred.promise;
 }
 
-exports.deleteFile = function (file, fileId) {
+exports.deleteFile = function (userId, fileId) {
     var deferred = Q.defer();
 
-    fs.unlink(config.file.destination + "/" + file, function (err) {
-        if (err) {
-            logger.error('ERROR Local storage - delete', err);
-            return deferred.reject(err);
-        } else {
-            folders.deleteFileByUser(fileId).then(function (data) {
-                deferred.resolve(data);
-            });
+    folders.findById(fileId).then(function (file) {
 
-        }
-    });
+        if (!file) return deferred.reject('ERROR Local storage - Not Found', err);
+        if (file.userId != userId) return deferred.reject('ERROR Local storage -Not Autorized', err);
 
+        fs.unlink(config.file.destination + "/" + file._id + '.' + file.ext, function (err) {
+            if (err) {
+                logger.error('ERROR Local storage - delete', err);
+                return deferred.reject(err);
+            } else {
+                folders.deleteFileByUser(fileId).then(function (data) {
+                    deferred.resolve(data);
+                });
+            }
+        });
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - delete', err);
+        return deferred.reject(err);
+    })
+    return deferred.promise;
+};
+exports.deleteFileAdmin = function (fileId) {
+    var deferred = Q.defer();
+
+    folders.findById(fileId).then(function (file) {
+
+        if (!file) return deferred.reject('ERROR Local storage - Not Found', err);
+        fs.unlink(config.file.destination + "/" + file._id + '.' + file.ext, function (err) {
+            if (err) {
+                logger.error('ERROR Local storage - delete', err);
+                return deferred.reject(err);
+            } else {
+                folders.deleteFileByUser(fileId).then(function (data) {
+                    deferred.resolve(data);
+                });
+            }
+        });
+    }).fail(function (err) {
+        logger.error('ERROR Local storage - delete', err);
+        return deferred.reject(err);
+    })
     return deferred.promise;
 };

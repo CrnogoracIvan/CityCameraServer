@@ -1,0 +1,23 @@
+<img class="loadingGif" *ngIf="loading" src="../../assets/images/spinner.gif" />
+<h1 class="dash-title">List users</h1>
+<div class="list-people">
+  <ul>
+    <li>
+      <h4>
+        <span class="tb-title">Num</span>
+        <span class="tb-title">Username</span>
+        <span class="tb-title">Email</span>
+        <span class="tb-title">Admin</span>
+      </h4>
+    </li>
+
+    <li *ngFor="let user of listUsers; let i = index;trackBy: trackByFn;">
+      <h4>
+        <span>{{i+ 1}}</span>
+        <span>{{ user.username }}</span>
+        <span>{{ user.email }}</span>
+        <span><input type="checkbox"  [checked]="user.isAdmin" (click)="update(user,trackByFn)" ></span>
+      </h4>
+    </li>
+  </ul>
+</div>

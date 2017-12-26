@@ -1,0 +1,51 @@
+
+<h1 class="dash-title">
+  <div class="folders-container col-lg-2">
+    <p class="tb-title"><b>List folders</b> </p>
+    <div class="folder-table">
+      <ul>
+        <li *ngFor="let folder of listFolders; let i = index" (click)="select(i)" [ngClass]="{sel: i == selected}">
+          <div class="md-col-5">
+            <a type="button" class="btn btn-link" (click)="listFiles(folder)">
+          <span class="glyphicon glyphicon-folder-close" ></span>{{folder}}
+          </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-10 tabs-conteiner">
+    <ngb-tabset>
+      <ngb-tab title="List">
+        <ng-template ngbTabContent>
+          <div class=" column">
+            <p class="tb-title"><b>List files</b> </p>
+            <table class="table-striped">
+              <tbody>
+                <tr *ngFor="let file of files">
+                  <td><span class="glyphicon glyphicon-file"></span> {{file.filename}}.{{file.ext}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Grid">
+        <ng-template ngbTabContent>
+          <div class="column">
+            <p class="tb-title"><b>List images</b> </p>
+            <div class="file-box" *ngFor="let file of files">
+              <img src="data:image/png;base64,{{file.content}}" *ngIf="localImg" />
+              <img src="https://citycamera.s3.eu-central-1.amazonaws.com/{{file._id}}.{{file.ext}}" *ngIf="s3Img" />
+              <!--<img ng-src="https://citycamera.s3.eu-central-1.amazonaws.com/{{file._id}}.{{file.ext}}" ng-if="s3Img" />-->
+              <div class="info-box">
+                <span>{{file.filename}}.{{file.ext}}</span>
+                <button *ngIf="!users.user.isAdmin" class="delete-button" (click)="deleteFile(file)">Delete U</button>
+                <button *ngIf="users.user.isAdmin" class="delete-button" (click)="deleteFileAdmin(file)">Delete A</button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>

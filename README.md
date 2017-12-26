@@ -31,6 +31,6 @@ API documentation is available in project **doc** folder. After changing the API
 Laslo Horvat
 Vladimir Kukic
 Borislav Stamenic
-
+Jelena Ivezic
 ## License
 [ISC](http://opensource.org/licenses/ISC)
